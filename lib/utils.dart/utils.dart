@@ -85,6 +85,15 @@ class Texts {
       fontWeight: FontWeight.bold,
     ),
   );
+  static const guestloginText = const Text(
+    'Guest Login',
+    style: TextStyle(
+      fontFamily: Fonts.primaryFont,
+      fontSize: 18.0,
+      color: AppColors.secondaryColor,
+      fontWeight: FontWeight.bold,
+    ),
+  );
   static const guestText = const Text(
     'Guest Login',
     style: TextStyle(

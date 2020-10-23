@@ -96,7 +96,24 @@ class HomeView extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    _buildIconCard(FontAwesomeIcons.envelope),
+                    Container(
+                      height: 60.0,
+                      width: 60.0,
+                      child: Material(
+                        borderRadius: BorderRadius.circular(12.0),
+                        elevation: 34.0,
+                        shadowColor: Colors.white70,
+                        child: FlatButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, routes.loginViewRoute);
+                          },
+                          child: Icon(
+                            FontAwesomeIcons.envelope,
+                            color: AppColors.secondaryColor,
+                          ),
+                        ),
+                      ),
+                    ),
                     SizedBox(
                       width: 10.0,
                     ),
@@ -129,7 +146,7 @@ class HomeView extends StatelessWidget {
                   onTap: () {
                     Navigator.pushNamed(context, routes.tradeViewRoute);
                   },
-                  child: Texts.nextText,
+                  child: Texts.guestText,
                 )
               ],
             ),
