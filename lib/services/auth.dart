@@ -29,8 +29,8 @@ class AppAuth {
     try {
       final authResult = await _auth.signInWithCredential(credential);
       final User user = authResult.user;
-      await databaseService.register(
-          user.email, user.displayName, '', user.uid, user.photoURL);
+      await databaseService.register(user.email, user.displayName.split(' ')[0],
+          user.displayName.split(' ')[1], user.uid, user.photoURL);
       return AuthStatus(user, '');
     } catch (e) {
       return AuthStatus(null, _extractMessage(e));
@@ -94,7 +94,7 @@ class AppAuth {
 }
 
 class AuthStatus {
-  FirebaseUser user;
+  User user;
   String errorMsg;
 
   AuthStatus(this.user, this.errorMsg);

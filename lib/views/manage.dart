@@ -17,7 +17,7 @@ class _ManageViewState extends State<ManageView>
   TabController tabController;
   String data = '';
   @override
-  void initState() async {
+  void initState() {
     super.initState();
     tabController = TabController(vsync: this, length: 2);
   }
