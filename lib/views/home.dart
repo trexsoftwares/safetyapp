@@ -145,7 +145,7 @@ class HomeView extends StatelessWidget {
               children: <Widget>[
                 InkWell(
                   onTap: () {
-                    Navigator.pushNamed(context, routes.tradeViewRoute);
+                    Navigator.pushNamed(context, routes.manageViewRoute);
                   },
                   child: Texts.guestText,
                 )
