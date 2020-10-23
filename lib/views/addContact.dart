@@ -238,11 +238,10 @@ class _AddContactViewState extends State<AddContactView>
       await data.writeAsString(
           names + "@@@" + name + '@@@' + 'relationship' + '@@@' + telephone);
     } catch (e) {
-      final file = File('${directory.path}/data.txt');
       final list = File('${directory.path}/list.txt');
       final text = '$name' + '@@@' + '$relationship' + '@@@' + '$telephone';
-      await file.writeAsString(text);
-      await list.writeAsString(name);
+
+      await list.writeAsString(text);
     }
     print('saved');
   }

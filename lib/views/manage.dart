@@ -15,9 +15,9 @@ class ManageView extends StatefulWidget {
 class _ManageViewState extends State<ManageView>
     with SingleTickerProviderStateMixin {
   TabController tabController;
-
+  String data = '';
   @override
-  void initState() {
+  void initState() async {
     super.initState();
     tabController = TabController(vsync: this, length: 2);
   }
@@ -75,21 +75,13 @@ class _ManageViewState extends State<ManageView>
                       ),
                     ),
                   ),*/
-                  Positioned(
-                    top: 25.0,
-                    right: 20.0,
-                    child: IconButton(
-                      icon: Icon(
-                        LineIcons.edit,
-                        color: Colors.white70,
-                        size: 35.0,
-                      ),
-                      onPressed: () {},
-                    ),
-                  ),
                 ],
               ),
             ),
+            Positioned(
+                top: 50,
+                right: 15,
+                child: _buildUserImage(Images.man2, 100.0, 50.0)),
             Positioned(
               top: 40.0,
               left: 20.0,
@@ -119,7 +111,7 @@ class _ManageViewState extends State<ManageView>
                         )
                       ],
                     ),*/
-                    getData(context),
+
                     Container(
                       padding: EdgeInsets.only(top: 20.0, bottom: 100.0),
                       child: Column(
@@ -139,6 +131,7 @@ class _ManageViewState extends State<ManageView>
                         ],
                       ),
                     ),
+                    Text(data)
                   ],
                 ),
               ),
@@ -149,26 +142,19 @@ class _ManageViewState extends State<ManageView>
     );
   }
 
-  getData(context) async {
-    try {
-      List colors = [Color(0xFFFF7B2B), Color(0xFF62BCC4), Color(0xFF6967B8)];
-      final directory = await getApplicationDocumentsDirectory();
-      final file = File('${directory.path}/list.txt');
-      String text = await file.readAsString();
-      List names = text.split("@@@");
-
-      for (int i = 0; i < names.length + 1; i++) {
-        String name = names[i];
-        var fileNew = File('${directory.path}/$name.txt');
-        String data = await fileNew.readAsString();
-        print(data);
-        List info = data.split('@@@');
-        return _buildExchangeRate(
-            colors[0], info[0], info[1], info[2], context);
-      }
-    } catch (e) {
-      return Container();
-    }
+  Widget _buildUserImage(AssetImage img, double size, double margin) {
+    return Container(
+      alignment: Alignment.centerRight,
+      height: size,
+      width: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        image: DecorationImage(
+          image: img,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
   }
 }
 
