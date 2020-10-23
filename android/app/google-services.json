@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "207813815354",
+    "firebase_url": "https://t-rex-safety-app-ea3f7.firebaseio.com",
+    "project_id": "t-rex-safety-app-ea3f7",
+    "storage_bucket": "t-rex-safety-app-ea3f7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:207813815354:android:d65f1a151db1e5a1e2d903",
+        "android_client_info": {
+          "package_name": "com.trex.safetyapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "207813815354-7h0i9rho7h4rlm6pj1daod44mt71pr0p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.trex.safetyapp",
+            "certificate_hash": "893c088cdba91404b522afe917f4a252fe8ee899"
+          }
+        },
+        {
+          "client_id": "207813815354-fk9e6ibifc02jv5nsd7relakk1brjinj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWXO8t7e49XaAvOvIzyHkeao2jfmVvXGA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "207813815354-fk9e6ibifc02jv5nsd7relakk1brjinj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
