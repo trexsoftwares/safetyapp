@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "207813815354-464lj4j010hm6c4r3fflhmkhnuai6c2t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.trex.safetyapp",
+            "certificate_hash": "d63fb05a039379eee06ec98cc2971e354d9226ff"
+          }
+        },
+        {
           "client_id": "207813815354-7h0i9rho7h4rlm6pj1daod44mt71pr0p.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
