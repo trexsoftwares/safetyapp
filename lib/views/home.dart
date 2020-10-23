@@ -120,9 +120,10 @@ class HomeView extends StatelessWidget {
                     GestureDetector(
                         child: _buildIconCard(FontAwesomeIcons.google),
                         onLongPress: () async {
-                          print('aaaaaaaaaaa');
                           final AppAuth appAuth = AppAuth(_auth);
-                          await appAuth.registerWithGoogle();
+                          await appAuth.registerWithGoogle().whenComplete(() =>
+                              Navigator.pushNamed(
+                                  context, routes.manageViewRoute));
                         }),
                     /*_buildIconCard(FontAwesomeIcons.google),
                       SizedBox(

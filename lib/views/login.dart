@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:safetyapp/_routing/routes.dart' as routes;
 import 'package:safetyapp/utils.dart/utils.dart';
 
+import '../services/auth.dart';
+import '../services/database.dart';
 import '../utils.dart/utils.dart';
 
 class LoginView extends StatelessWidget {
@@ -11,6 +14,7 @@ class LoginView extends StatelessWidget {
   TextEditingController password2Controller = new TextEditingController();
   TextEditingController usernameController = new TextEditingController();
   TextEditingController reenterpasswordController = new TextEditingController();
+  FirebaseAuth _auth = FirebaseAuth.instance;
   var _formKey = GlobalKey<FormState>();
   var _formKey2 = GlobalKey<FormState>();
   @override
@@ -224,8 +228,23 @@ class LoginView extends StatelessWidget {
                     child: Column(
                       children: <Widget>[
                         InkWell(
-                          onTap: () {
+                          onTap: () async {
                             if (_formKey2.currentState.validate()) {
+                              final AppAuth appAuth = AppAuth(_auth);
+                              await appAuth
+                                  .registerWithEmailAndPassword(
+                                      email2Controller.text,
+                                      password2Controller.text)
+                                  .whenComplete(() async {
+                                DatabaseService databaseService =
+                                    DatabaseService(_auth.currentUser.uid);
+                                databaseService.register(
+                                    email2Controller.text,
+                                    'fName',
+                                    'lName',
+                                    _auth.currentUser.uid,
+                                    'photoUrl');
+                              });
                               Navigator.pushNamed(
                                   context, routes.manageViewRoute);
                             }
