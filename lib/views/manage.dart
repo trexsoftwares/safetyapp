@@ -16,6 +16,8 @@ class _ManageViewState extends State<ManageView>
     with SingleTickerProviderStateMixin {
   TabController tabController;
   String data = '';
+  bool edit = false;
+  TextEditingController messageController = new TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -165,11 +167,123 @@ class _ManageViewState extends State<ManageView>
                           // We can show the loading view until the data comes back.
 
                           return _buildTile(Color(0xFF6967B8),
-                              'No Contacts Added', '', '', context);
+                              'No Contacts Added', '', '', context, 100);
                         }
                       },
                     ),
-                    Card(),
+                    FutureBuilder(
+                        future: messageData(context),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Container(
+                              padding: EdgeInsets.all(10),
+                              width: MediaQuery.of(context).size.width,
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                                color: Colors.white,
+                                elevation: 10,
+                                child: edit
+                                    ? Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          ListTile(
+                                            leading:
+                                                Icon(Icons.message, size: 50),
+                                            trailing: Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width -
+                                                    120,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      new BorderRadius.circular(
+                                                          10.0),
+                                                ),
+                                                child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: 20, right: 20),
+                                                    child: TextFormField(
+
+                                                        /*  validator: (String name) {
+                                if (name.length > 0) {
+                                  return null;
+                                } else {
+                                  return 'Please Enter a Name';
+                                }
+                              },*/
+                                                        controller:
+                                                            messageController,
+                                                        decoration:
+                                                            InputDecoration(
+                                                          border:
+                                                              InputBorder.none,
+                                                          labelText:
+                                                              'Enter Message',
+                                                        )))),
+                                          ),
+                                          ButtonTheme.bar(
+                                            child: ButtonBar(
+                                              children: <Widget>[
+                                                FlatButton(
+                                                  child: const Text('Save',
+                                                      style: TextStyle(
+                                                          color: Colors.black)),
+                                                  onPressed: () async {
+                                                    SharedPreferences prefs =
+                                                        await SharedPreferences
+                                                            .getInstance();
+                                                    prefs.setString('message',
+                                                        messageController.text);
+                                                    setState(() {
+                                                      edit = false;
+                                                    });
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          ListTile(
+                                            leading:
+                                                Icon(Icons.message, size: 50),
+                                            title: Text(snapshot.data,
+                                                style: TextStyle(
+                                                    color: Colors.black)),
+                                            subtitle: Text('LOCATION',
+                                                style: TextStyle(
+                                                    color: Colors.black)),
+                                          ),
+                                          ButtonTheme.bar(
+                                            child: ButtonBar(
+                                              children: <Widget>[
+                                                FlatButton(
+                                                  child: const Text('Edit',
+                                                      style: TextStyle(
+                                                          color: Colors.black)),
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      edit = true;
+                                                    });
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                              ),
+                            );
+                          } else {
+                            return Container();
+                          }
+                        })
                   ],
                 ),
               ),
@@ -178,6 +292,16 @@ class _ManageViewState extends State<ManageView>
         ),
       ),
     );
+  }
+
+  messageData(context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String data = prefs.get('message') ?? '0';
+    if (data == '0') {
+      return 'Please Help Me I am in trouble!!!. This is my location now';
+    } else {
+      return data;
+    }
   }
 
   getData(context) async {
@@ -218,7 +342,7 @@ class _ManageViewState extends State<ManageView>
             },
             icon: Icon(Icons.delete),
           ),
-          _buildTile(colours[i], info[0], info[1], info[2], context)
+          _buildTile(colours[i], info[0], info[1], info[2], context, i)
         ]));
 
         tabs.add(SizedBox(
@@ -249,71 +373,219 @@ class _ManageViewState extends State<ManageView>
 }
 
 Widget _buildTile(Color color, String name, String relationship,
-    String telephone, BuildContext context) {
-  return Container(
-    height: 80.0,
-    width: MediaQuery.of(context).size.width - 60.0,
-    decoration: BoxDecoration(
-      color: color.withAlpha(220),
-      borderRadius: BorderRadius.circular(10.0),
-    ),
-    child: Stack(
-      children: <Widget>[
-        Positioned(
-          child: ClipRRect(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(10.0),
-              bottomLeft: Radius.circular(10.0),
-              bottomRight: Radius.elliptical(90.0, 110.0),
+    String telephone, BuildContext context, int i) {
+  TextEditingController nameController = new TextEditingController();
+  TextEditingController relationshipController = new TextEditingController();
+
+  TextEditingController numberController = new TextEditingController();
+
+  return GestureDetector(
+      onTap: () async {
+        await showDialog<String>(
+          context: context,
+          child: new AlertDialog(
+            backgroundColor: Colors.white,
+            contentPadding: const EdgeInsets.all(16.0),
+            content: Form(
+              child: Column(
+                children: <Widget>[
+                  Texts.editContact,
+                  SizedBox(height: 10),
+                  Container(
+                      width: MediaQuery.of(context).size.width / 1.2,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: new BorderRadius.circular(10.0),
+                      ),
+                      child: Padding(
+                          padding: EdgeInsets.only(left: 20, right: 20),
+                          child: TextFormField(
+
+                              /*  validator: (String name) {
+                                if (name.length > 0) {
+                                  return null;
+                                } else {
+                                  return 'Please Enter a Name';
+                                }
+                              },*/
+                              controller: nameController,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                labelText: 'Enter Name',
+                              )))),
+                  SizedBox(height: 10),
+                  Container(
+                      width: MediaQuery.of(context).size.width / 1.2,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: new BorderRadius.circular(10.0),
+                      ),
+                      child: Padding(
+                          padding: EdgeInsets.only(left: 20, right: 20),
+                          child: TextFormField(
+
+                              /*  validator: (String relationship) {
+                                if (relationship.length > 0) {
+                                  return null;
+                                } else {
+                                  return 'Please Enter the Relationship';
+                                }
+                              },*/
+                              controller: relationshipController,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                labelText: 'Enter Relationship',
+                              )))),
+                  SizedBox(height: 10),
+                  Container(
+                      width: MediaQuery.of(context).size.width / 1.2,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: new BorderRadius.circular(10.0),
+                      ),
+                      child: Padding(
+                          padding: EdgeInsets.only(left: 20, right: 20),
+                          child: TextFormField(
+                              keyboardType: TextInputType.number,
+                              /*  validator: (String number) {
+                                if (number.length != 10) {
+                                  return 'Please Enter a valid Phone Number';
+                                } else {
+                                  return null;
+                                }
+                              }*/
+                              controller: numberController,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                labelText: 'Enter Telephone Number',
+                              )))),
+                ],
+              ),
             ),
-            child: Container(
-              width: MediaQuery.of(context).size.width / 2 - 20,
-              decoration: BoxDecoration(color: color),
-            ),
+            actions: <Widget>[
+              new FlatButton(
+                  child: const Text('CANCEL'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }),
+              new FlatButton(
+                  child: const Text('SAVE'),
+                  onPressed: () async {
+                    if (nameController.text.length == 0) {
+                      Flushbar(
+                        title: 'Enter a name',
+                        message: 'Please enter a name for the user',
+                        icon: Icon(
+                          Icons.error_outline,
+                          size: 28,
+                          color: Colors.green.shade300,
+                        ),
+                        leftBarIndicatorColor: Colors.blue.shade300,
+                        duration: Duration(seconds: 3),
+                      )..show(context);
+                    } else if (relationshipController.text.length == 0) {
+                      Flushbar(
+                        title: 'Enter a relationship',
+                        message: 'Please enter a relationship for the user',
+                        icon: Icon(
+                          Icons.error_outline,
+                          size: 28,
+                          color: Colors.green.shade300,
+                        ),
+                        leftBarIndicatorColor: Colors.blue.shade300,
+                        duration: Duration(seconds: 3),
+                      )..show(context);
+                    } else if (numberController.text.length != 10) {
+                      Flushbar(
+                        title: 'Wrong Number',
+                        message: 'Please check the phone number',
+                        icon: Icon(
+                          Icons.error_outline,
+                          size: 28,
+                          color: Colors.green.shade300,
+                        ),
+                        leftBarIndicatorColor: Colors.blue.shade300,
+                        duration: Duration(seconds: 3),
+                      )..show(context);
+                    } else {
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      prefs.setStringList(i.toString(), [
+                        nameController.text,
+                        relationshipController.text,
+                        numberController.text
+                      ]);
+                      Navigator.pop(context);
+                    }
+                  })
+            ],
           ),
+        );
+      },
+      child: Container(
+        height: 80.0,
+        width: MediaQuery.of(context).size.width - 60.0,
+        decoration: BoxDecoration(
+          color: color.withAlpha(220),
+          borderRadius: BorderRadius.circular(10.0),
         ),
-        Positioned(
-          top: 15.0,
-          left: 20.0,
-          child: Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  name,
-                  style: TextStyle(
-                    fontFamily: Fonts.primaryFont,
-                    color: Colors.white.withOpacity(0.8),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20.0,
-                  ),
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+              child: ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10.0),
+                  bottomLeft: Radius.circular(10.0),
+                  bottomRight: Radius.elliptical(90.0, 110.0),
                 ),
-                Text(
-                  relationship,
-                  style: TextStyle(
-                    fontFamily: Fonts.primaryFont,
-                    color: Colors.white.withOpacity(0.8),
-                    fontSize: 18.0,
-                  ),
-                )
-              ],
+                child: Container(
+                  width: MediaQuery.of(context).size.width / 2 - 20,
+                  decoration: BoxDecoration(color: color),
+                ),
+              ),
             ),
-          ),
-        ),
-        Positioned(
-          top: 23.0,
-          right: 20.0,
-          child: Text(
-            telephone,
-            style: TextStyle(
-              fontFamily: Fonts.primaryFont,
-              color: Colors.white.withOpacity(0.8),
-              fontWeight: FontWeight.bold,
-              fontSize: 22.0,
+            Positioned(
+              top: 15.0,
+              left: 20.0,
+              child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      name,
+                      style: TextStyle(
+                        fontFamily: Fonts.primaryFont,
+                        color: Colors.white.withOpacity(0.8),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20.0,
+                      ),
+                    ),
+                    Text(
+                      relationship,
+                      style: TextStyle(
+                        fontFamily: Fonts.primaryFont,
+                        color: Colors.white.withOpacity(0.8),
+                        fontSize: 18.0,
+                      ),
+                    )
+                  ],
+                ),
+              ),
             ),
-          ),
+            Positioned(
+              top: 23.0,
+              right: 20.0,
+              child: Text(
+                telephone,
+                style: TextStyle(
+                  fontFamily: Fonts.primaryFont,
+                  color: Colors.white.withOpacity(0.8),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22.0,
+                ),
+              ),
+            ),
+          ],
         ),
-      ],
-    ),
-  );
+      ));
 }
