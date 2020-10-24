@@ -5,6 +5,8 @@ import 'package:safetyapp/utils.dart/utils.dart';
 import 'package:safetyapp/_routing/routes.dart' as routes;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'manage.dart';
+
 class AddContactView extends StatefulWidget {
   @override
   _AddContactViewState createState() => _AddContactViewState();
@@ -207,7 +209,11 @@ class _AddContactViewState extends State<AddContactView>
                                             nameController.text,
                                             relationController.text,
                                             phoneController.text);
-                                        Navigator.pop(context);
+                                        Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ManageView()));
                                       }
                                     },
                                     child: Texts.addContact,
@@ -231,7 +237,7 @@ class _AddContactViewState extends State<AddContactView>
 
   _save(String name, String relationship, String telephone) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    int i = 1;
+    int i = 0;
     while (true) {
       var data = prefs.getStringList(i.toString()) ?? 0;
       if (data == 0) {

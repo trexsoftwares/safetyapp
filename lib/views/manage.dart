@@ -121,25 +121,6 @@ class _ManageViewState extends State<ManageView>
                         }
                       },
                     ),
-                    Container(
-                      padding: EdgeInsets.only(top: 20.0, bottom: 100.0),
-                      child: Column(
-                        children: <Widget>[
-                          _buildExchangeRate(Color(0xFFFF7B2B),
-                              "British Pounds", "BGP", "620.00", context),
-                          SizedBox(
-                            height: 30.0,
-                          ),
-                          _buildExchangeRate(Color(0xFF62BCC4), "US Dollars",
-                              "USD", "0.90", context),
-                          SizedBox(
-                            height: 30.0,
-                          ),
-                          _buildExchangeRate(Color(0xFF6967B8), "Euro", "EUR",
-                              "190.0", context),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -152,20 +133,34 @@ class _ManageViewState extends State<ManageView>
 
   getData(context) async {
     List<Widget> tabs = [];
-    List colours = [Color(0xFFFF7B2B), Color(0xFF62BCC4), Color(0xFF6967B8)];
+    List colours = [
+      Color(0xFFFF7B2B),
+      Color(0xFF62BCC4),
+      Color(0xFF6967B8),
+      Color(0xFFD4E157),
+      Color(0xFF42A5F5)
+    ];
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    int i = 1;
-    while (true) {
+
+    for (int i = 0; i < 5; i++) {
       var data = prefs.getStringList(i.toString()) ?? 0;
       if (data == 0) {
+        print("NO DATA");
         break;
       } else {
-        tabs.add(_buildExchangeRate(
-            Color(0xFFFF7B2B), "British Pounds", "BGP", "620.00", context));
-        continue;
+        List info = prefs.getStringList(i.toString());
+        print(info);
+        tabs.add(
+            _buildExchangeRate(colours[i], info[0], info[1], info[2], context));
+        tabs.add(SizedBox(
+          height: 10,
+        ));
       }
-      return tabs;
     }
+    if (tabs == []) {
+      tabs.add(Container());
+    }
+    return tabs;
   }
 
   Widget _buildUserImage(AssetImage img, double size, double margin) {
