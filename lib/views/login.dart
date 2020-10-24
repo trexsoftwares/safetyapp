@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:safetyapp/_routing/routes.dart' as routes;
 import 'package:safetyapp/utils.dart/utils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/auth.dart';
 import '../services/database.dart';
@@ -12,7 +13,8 @@ class LoginView extends StatelessWidget {
   TextEditingController passwordController = new TextEditingController();
   TextEditingController email2Controller = new TextEditingController();
   TextEditingController password2Controller = new TextEditingController();
-  TextEditingController usernameController = new TextEditingController();
+  TextEditingController firstNameController = new TextEditingController();
+  TextEditingController lastNameController = new TextEditingController();
   TextEditingController reenterpasswordController = new TextEditingController();
   FirebaseAuth _auth = FirebaseAuth.instance;
   var _formKey = GlobalKey<FormState>();
@@ -111,10 +113,21 @@ class LoginView extends StatelessWidget {
                     child: Column(
                       children: <Widget>[
                         InkWell(
-                          onTap: () {
+                          onTap: () async {
                             if (_formKey.currentState.validate()) {
-                              Navigator.pushNamed(
-                                  context, routes.manageViewRoute);
+                              final AppAuth appAuth = AppAuth(_auth);
+                              AuthStatus authStatus =
+                                  await appAuth.signInWithEmailAndPassword(
+                                      emailController.text,
+                                      passwordController.text);
+                              print(authStatus.errorMsg);
+                              if (authStatus.user != null) {
+                                SharedPreferences sharedPref =
+                                    await SharedPreferences.getInstance();
+                                await sharedPref.setBool('logged', true);
+                                Navigator.pushNamed(
+                                    context, routes.manageViewRoute);
+                              }
                             }
                           },
                           child: Texts.login,
@@ -143,17 +156,39 @@ class LoginView extends StatelessWidget {
                       child: Padding(
                           padding: EdgeInsets.only(left: 20, right: 20),
                           child: TextFormField(
-                              controller: usernameController,
+                              controller: firstNameController,
                               validator: (String name) {
                                 if (name.length == 0) {
-                                  return "Please enter an username";
+                                  return "Please enter your first name";
                                 } else {
                                   return null;
                                 }
                               },
                               decoration: InputDecoration(
                                 border: InputBorder.none,
-                                labelText: 'Username',
+                                labelText: 'First Name',
+                              )))),
+                  SizedBox(height: 10),
+                  Container(
+                      width: MediaQuery.of(context).size.width / 1.2,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: new BorderRadius.circular(10.0),
+                      ),
+                      child: Padding(
+                          padding: EdgeInsets.only(left: 20, right: 20),
+                          child: TextFormField(
+                              controller: lastNameController,
+                              validator: (String name) {
+                                if (name.length == 0) {
+                                  return "Please enter your last name";
+                                } else {
+                                  return null;
+                                }
+                              },
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                labelText: 'Last Name',
                               )))),
                   SizedBox(height: 10),
                   Container(
@@ -231,22 +266,23 @@ class LoginView extends StatelessWidget {
                           onTap: () async {
                             if (_formKey2.currentState.validate()) {
                               final AppAuth appAuth = AppAuth(_auth);
-                              await appAuth
-                                  .registerWithEmailAndPassword(
+                              AuthStatus authStatus =
+                                  await appAuth.registerWithEmailAndPassword(
                                       email2Controller.text,
-                                      password2Controller.text)
-                                  .whenComplete(() async {
+                                      password2Controller.text);
+
+                              if (authStatus.user != null) {
                                 DatabaseService databaseService =
                                     DatabaseService(_auth.currentUser.uid);
                                 databaseService.register(
                                     email2Controller.text,
-                                    'fName',
-                                    'lName',
+                                    firstNameController.text,
+                                    lastNameController.text,
                                     _auth.currentUser.uid,
                                     'photoUrl');
-                              });
-                              Navigator.pushNamed(
-                                  context, routes.manageViewRoute);
+                                Navigator.pushNamed(
+                                    context, routes.manageViewRoute);
+                              }
                             }
                           },
                           child: Texts.signup,

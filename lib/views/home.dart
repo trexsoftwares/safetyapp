@@ -5,6 +5,7 @@ import 'package:safetyapp/services/auth.dart';
 import 'package:safetyapp/services/database.dart';
 import 'package:safetyapp/utils.dart/utils.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeView extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -121,9 +122,14 @@ class HomeView extends StatelessWidget {
                         child: _buildIconCard(FontAwesomeIcons.google),
                         onLongPress: () async {
                           final AppAuth appAuth = AppAuth(_auth);
-                          await appAuth.registerWithGoogle().whenComplete(() =>
-                              Navigator.pushNamed(
-                                  context, routes.manageViewRoute));
+                          await appAuth
+                              .registerWithGoogle()
+                              .whenComplete(() async {
+                            SharedPreferences sharedPref =
+                                await SharedPreferences.getInstance();
+                            await sharedPref.setBool('logged', true);
+                            Navigator.pushNamed(context, routes.emergViewRoute);
+                          });
                         }),
                     /*_buildIconCard(FontAwesomeIcons.google),
                       SizedBox(
