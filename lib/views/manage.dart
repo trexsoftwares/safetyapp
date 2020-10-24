@@ -1,11 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:safetyapp/utils.dart/utils.dart';
 import 'package:safetyapp/_routing/routes.dart' as routes;
-import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ManageView extends StatefulWidget {
   @override
@@ -111,7 +109,18 @@ class _ManageViewState extends State<ManageView>
                         )
                       ],
                     ),*/
+                    FutureBuilder(
+                      future: getData(context),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Center(child: Column(children: snapshot.data));
+                        } else {
+                          // We can show the loading view until the data comes back.
 
+                          return CircularProgressIndicator();
+                        }
+                      },
+                    ),
                     Container(
                       padding: EdgeInsets.only(top: 20.0, bottom: 100.0),
                       child: Column(
@@ -131,7 +140,6 @@ class _ManageViewState extends State<ManageView>
                         ],
                       ),
                     ),
-                    Text(data)
                   ],
                 ),
               ),
@@ -140,6 +148,24 @@ class _ManageViewState extends State<ManageView>
         ),
       ),
     );
+  }
+
+  getData(context) async {
+    List<Widget> tabs = [];
+    List colours = [Color(0xFFFF7B2B), Color(0xFF62BCC4), Color(0xFF6967B8)];
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int i = 1;
+    while (true) {
+      var data = prefs.getStringList(i.toString()) ?? 0;
+      if (data == 0) {
+        break;
+      } else {
+        tabs.add(_buildExchangeRate(
+            Color(0xFFFF7B2B), "British Pounds", "BGP", "620.00", context));
+        continue;
+      }
+      return tabs;
+    }
   }
 
   Widget _buildUserImage(AssetImage img, double size, double margin) {
