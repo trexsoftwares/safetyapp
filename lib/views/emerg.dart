@@ -255,11 +255,11 @@ class EmergView extends StatelessWidget {
   void sendAll() async {
     SharedPreferences sharedPref = await SharedPreferences.getInstance();
     List<String> numbers = [];
-    for (int i = 1; i < 6; i++) {
-      String number = sharedPref.getString('$i');
-      print(number);
+    for (int i = 0; i < 5; i++) {
+      List<String> number = sharedPref.getStringList('$i');
+      print(number[2]);
       if (number == null) break;
-      numbers.add(number);
+      numbers.add(number[2]);
     }
     numbers.forEach((element) async {
       sendMsg(element);
