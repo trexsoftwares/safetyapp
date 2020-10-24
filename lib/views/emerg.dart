@@ -236,8 +236,8 @@ class EmergView extends StatelessWidget {
 
   void navigateToProfile(context) async {
     Navigator.pushNamed(context, routes.manageViewRoute);
-    SharedPreferences sharedPref = await SharedPreferences.getInstance();
-    await sharedPref.setBool('logged', false);
+    //SharedPreferences sharedPref = await SharedPreferences.getInstance();
+    //await sharedPref.setBool('logged', false);
   }
 
   void sendMsg(String number) async {
