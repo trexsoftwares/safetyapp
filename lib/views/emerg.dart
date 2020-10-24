@@ -1,14 +1,18 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+//import 'package:flutter_sms/flutter_sms.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:safetyapp/_routing/routes.dart' as routes;
 import 'package:safetyapp/services/auth.dart';
 import 'package:safetyapp/services/database.dart';
 import 'package:safetyapp/utils.dart/utils.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sms/sms.dart';
 
-class HomeView extends StatelessWidget {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+class EmergView extends StatelessWidget {
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
+  static final String uuid = _auth.currentUser.uid;
+  static final DatabaseService databaseService = DatabaseService(uuid);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,18 +33,38 @@ class HomeView extends StatelessWidget {
               Positioned.fill(
                 child: Align(
                   alignment: Alignment.bottomCenter,
-                  child: Container(
-                    height: 90.0,
-                    width: 90.0,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(image: Images.man1),
-                      border: Border.all(
-                        color: Colors.white,
-                        width: 5.0,
-                      ),
-                    ),
-                  ),
+                  child: FutureBuilder(
+                      future: databaseService.proPicURL(),
+                      builder: (context, snap) {
+                        if (snap.hasData) {
+                          return Container(
+                            height: 90.0,
+                            width: 90.0,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                  image: NetworkImage(snap.data)),
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 5.0,
+                              ),
+                            ),
+                          );
+                        } else {
+                          return Container(
+                            height: 90.0,
+                            width: 90.0,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(image: Images.man1),
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 5.0,
+                              ),
+                            ),
+                          );
+                        }
+                      }),
                 ),
               )
             ],
@@ -64,29 +88,22 @@ class HomeView extends StatelessWidget {
               children: <Widget>[
                 Stack(
                   children: <Widget>[
-                    Positioned(
-                      left: -25.0,
-                      child: _buildUserImage(Images.man2, 50.0, 70.0),
-                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        _buildUserImage(Images.woman1, 36.0, 84.0),
-                        _buildUserImage(Images.woman2, 56.0, 30.0),
-                        _buildUserImage(Images.man3, 36.0, 90.0),
-                        _buildUserImage(Images.woman4, 70.0, 0.0),
+                        _buildUserImage(Images.woman1, 56.0, 30.0),
+                        _buildUserImage(Images.woman2, 56.0, 90.0),
+                        _buildUserImage(Images.man3, 56.0, 30.0),
+                        _buildUserImage(Images.woman4, 56.0, 90.0),
+                        _buildUserImage(Images.woman4, 56.0, 30.0),
                       ],
-                    ),
-                    Positioned(
-                      right: -10.0,
-                      child: _buildUserImage(Images.woman3, 38.0, 100.0),
                     ),
                   ],
                 ),
               ],
             ),
           ),
-          Container(
+          /* Container(
             padding: const EdgeInsets.only(top: 50.0),
             child: Column(
               children: <Widget>[
@@ -97,7 +114,7 @@ class HomeView extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Container(
+                   Container(
                       height: 60.0,
                       width: 60.0,
                       child: Material(
@@ -122,15 +139,9 @@ class HomeView extends StatelessWidget {
                         child: _buildIconCard(FontAwesomeIcons.google),
                         onLongPress: () async {
                           final AppAuth appAuth = AppAuth(_auth);
-                          await appAuth
-                              .registerWithGoogle()
-                              .whenComplete(() async {
-                            SharedPreferences sharedPref =
-                                await SharedPreferences.getInstance();
-                            await sharedPref.setBool('logged', true);
-                            Navigator.pushNamed(
-                                context, routes.manageViewRoute);
-                          });
+                          await appAuth.registerWithGoogle().whenComplete(() =>
+                              Navigator.pushNamed(
+                                  context, routes.manageViewRoute));
                         }),
                     /*_buildIconCard(FontAwesomeIcons.google),
                       SizedBox(
@@ -141,24 +152,30 @@ class HomeView extends StatelessWidget {
                         width: 10.0,
                       ),
                       _buildIconCard(FontAwesomeIcons.linkedinIn),*/
+                  
                   ],
                 )
               ],
             ),
-          ),
+          ),*/
           Container(
-            padding: EdgeInsets.only(top: 30.0),
-            child: Column(
-              children: <Widget>[
-                InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(context, routes.manageViewRoute);
+              padding: EdgeInsets.only(bottom: 30.0),
+              child: GestureDetector(
+                  onTap: () async {
+                    Position position = await Geolocator.getCurrentPosition(
+                        desiredAccuracy: LocationAccuracy.high);
+                    //sendSMS(message: 'test', recipients: ['0766721100']);
+                    SmsSender sender = new SmsSender();
+                    String address = '0703625454';
+                    sender.sendSms(new SmsMessage(address,
+                        'https://www.google.com/maps/?q=${position.latitude},${position.longitude}'));
+                    print(
+                        'https://www.google.com/maps/?q=${position.latitude},${position.longitude}');
                   },
-                  child: Texts.guestText,
-                )
-              ],
-            ),
-          )
+                  child: CircleAvatar(
+                      backgroundColor: Colors.red,
+                      radius: MediaQuery.of(context).size.width / 4,
+                      child: Texts.alertText))),
         ],
       ),
     );

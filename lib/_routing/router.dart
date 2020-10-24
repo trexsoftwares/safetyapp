@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safetyapp/views/addContact.dart';
+import 'package:safetyapp/views/emerg.dart';
 import 'package:safetyapp/views/home.dart';
 import 'package:safetyapp/views/login.dart';
 import 'package:safetyapp/views/manage.dart';
@@ -10,6 +11,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
     case homeViewRoute:
       return MaterialPageRoute(builder: (context) => HomeView());
+    case emergViewRoute:
+      return MaterialPageRoute(builder: (context) => EmergView());
     case tradeViewRoute:
       return MaterialPageRoute(builder: (context) => TradeView());
     case manageViewRoute:

@@ -78,6 +78,7 @@ class AppAuth {
           email: email, password: password);
       return AuthStatus(result.user, "");
     } catch (e) {
+      //print(e);
       return AuthStatus(null, _extractMessage(e));
     }
   }
