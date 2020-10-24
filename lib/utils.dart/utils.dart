@@ -201,6 +201,16 @@ class Texts {
       fontWeight: FontWeight.bold,
     ),
   );
+
+  static const alertText = const Text(
+    'Alert All!',
+    style: TextStyle(
+      fontFamily: Fonts.primaryFont,
+      fontSize: 45,
+      color: Colors.yellow,
+      fontWeight: FontWeight.bold,
+    ),
+  );
 }
 
 class TabText {
