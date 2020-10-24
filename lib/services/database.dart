@@ -28,38 +28,39 @@ class DatabaseService {
     });
   }
 
-  Future addContacts(
-      String name, String relationship, String number, String pos) async {
-    return await userCollection
-        .doc(uuid)
-        .collection('Contacts')
-        .doc(pos)
-        .set({'name': name, 'relationship': relationship, 'number': number});
+  Future syncContacts() async {
+    SharedPreferences sharedPref = await SharedPreferences.getInstance();
+    for (int i = 0; i < 5; i++) {
+      try {
+        List<String> contact = sharedPref.getStringList('$i');
+        await addEditContacts(contact[0], contact[1], contact[2], '$i');
+        if (contact == null) {
+          await addEditContacts(contact[0], contact[1], contact[2], '$i');
+        }
+      } catch (e) {}
+    }
   }
 
-  Future editContacts(
+  Future addEditContacts(
       String name, String relationship, String number, String pos) async {
-    return await userCollection
-        .doc(uuid)
-        .collection('Contacts')
-        .doc(pos)
-        .update({'name': name, 'relationship': relationship, 'number': number});
+    var data = await userCollection.doc(uuid).get();
+    var contact = data.data()[pos];
+    return await userCollection.doc(uuid).update({
+      pos: [
+        name != null ? name : contact[0],
+        relationship != null ? relationship : contact[1],
+        number != null ? number : contact[2]
+      ]
+    });
   }
 
   Future deleteContacts(String pos) async {
-    return await userCollection
-        .doc(uuid)
-        .collection('Contacts')
-        .doc(pos)
-        .delete();
+    return await userCollection.doc(uuid).update({pos: null});
   }
 
   Future getContacts(String pos) async {
-    var contacts = await userCollection.doc(uuid).collection('Contacts').get();
-    List<Map<int, Map<String, String>>> contactsDic = [];
-    for (int i = 0; i < contacts.docs.length; i++) {
-      //contactsDic[i] = {contacts.docs[i].data()['']};
-    }
+    var data = await userCollection.doc(uuid).get();
+    return data.data();
   }
 
   Future setProPic() async {
