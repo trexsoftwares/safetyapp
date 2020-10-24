@@ -16,7 +16,6 @@ class _ManageViewState extends State<ManageView>
   String data = '';
   @override
   void initState() {
-    getData();
     super.initState();
     tabController = TabController(vsync: this, length: 2);
   }
@@ -111,12 +110,10 @@ class _ManageViewState extends State<ManageView>
                       ],
                     ),*/
                     FutureBuilder(
-                      future: getData(),
+                      future: getData(context),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
-                          return Center(
-                              child: Container(
-                                  child: Text('hasData: ${snapshot.data}')));
+                          return Center(child: Column(children: snapshot.data));
                         } else {
                           // We can show the loading view until the data comes back.
 
@@ -153,7 +150,9 @@ class _ManageViewState extends State<ManageView>
     );
   }
 
-  getData() async {
+  getData(context) async {
+    List<Widget> tabs = [];
+    List colours = [Color(0xFFFF7B2B), Color(0xFF62BCC4), Color(0xFF6967B8)];
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int i = 1;
     while (true) {
@@ -161,8 +160,11 @@ class _ManageViewState extends State<ManageView>
       if (data == 0) {
         break;
       } else {
-        return data;
+        tabs.add(_buildExchangeRate(
+            Color(0xFFFF7B2B), "British Pounds", "BGP", "620.00", context));
+        continue;
       }
+      return tabs;
     }
   }
 
