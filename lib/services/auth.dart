@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:safetyapp/services/database.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AppAuth {
   FirebaseAuth _auth;
@@ -87,7 +88,11 @@ class AppAuth {
 
   Future signOut() async {
     try {
-      return await _auth.signOut();
+      return await _auth.signOut().whenComplete(() async {
+        SharedPreferences sharedPref = await SharedPreferences.getInstance();
+        await sharedPref.setBool('logged', false);
+        await sharedPref.setString('loginType', null);
+      });
     } catch (e) {
       print(e.toString());
     }
