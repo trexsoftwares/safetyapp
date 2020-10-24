@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DatabaseService {
   final String uuid;
@@ -47,12 +49,25 @@ class DatabaseService {
   }
 
   Future proPicURL() async {
+    SharedPreferences sharedPref = await SharedPreferences.getInstance();
+    Connectivity connectivity = Connectivity();
+    ConnectivityResult result = await connectivity.checkConnectivity();
+    String loginType = sharedPref.getString('loginType');
+    if (result == ConnectivityResult.none || loginType == 'guest') {
+      return null;
+    }
     try {
       var data = await userCollection.doc(uuid).get();
       return data.data()['proPic'];
     } catch (e) {
       return null;
     }
+  }
+
+  Future setLocalData() async {
+    SharedPreferences sharedPref = await SharedPreferences.getInstance();
+    Connectivity connectivity = Connectivity();
+    ConnectivityResult result = await connectivity.checkConnectivity();
   }
 
   Future test(String a) async {

@@ -13,6 +13,9 @@ class Images {
   static const woman3 = const AssetImage('assets/images/woman3.jpg');
   static const woman4 = const AssetImage('assets/images/woman4.jpg');
   static const woman5 = const AssetImage('assets/images/woman5.jpg');
+
+  static const icon = const AssetImage('assets/images/icon.jpg');
+  static const person = const AssetImage('assets/images/person.jpg');
 }
 
 class Fonts {
@@ -27,7 +30,7 @@ class AppColors {
 
 class Texts {
   static const welcomeText = const Text(
-    'Welcome Onboard!',
+    'Welcome!',
     style: TextStyle(
       fontFamily: Fonts.primaryFont,
       fontSize: 28.0,
@@ -56,7 +59,7 @@ class Texts {
   );
 
   static const welcomeText2 = const Text(
-    'If you like please link your social media account to make it easy for other members to identify you.',
+    'Tap on a contact to send an alert. If you are to send to all, tap on Alert All!',
     style: TextStyle(
       fontFamily: Fonts.primaryFont,
       fontSize: 16.0,

@@ -7,6 +7,7 @@ import 'package:safetyapp/services/auth.dart';
 import 'package:safetyapp/services/database.dart';
 import 'package:safetyapp/utils.dart/utils.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sms/sms.dart';
 
 class EmergView extends StatelessWidget {
@@ -37,26 +38,30 @@ class EmergView extends StatelessWidget {
                       future: databaseService.proPicURL(),
                       builder: (context, snap) {
                         if (snap.hasData) {
-                          return Container(
-                            height: 90.0,
-                            width: 90.0,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                  image: NetworkImage(snap.data)),
-                              border: Border.all(
-                                color: Colors.white,
-                                width: 5.0,
-                              ),
-                            ),
-                          );
+                          return GestureDetector(
+                              onTap: () {
+                                navigateToProfile(context);
+                              },
+                              child: Container(
+                                height: 90.0,
+                                width: 90.0,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                      image: NetworkImage(snap.data)),
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 5.0,
+                                  ),
+                                ),
+                              ));
                         } else {
                           return Container(
                             height: 90.0,
                             width: 90.0,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              image: DecorationImage(image: Images.man1),
+                              image: DecorationImage(image: Images.icon),
                               border: Border.all(
                                 color: Colors.white,
                                 width: 5.0,
@@ -91,11 +96,11 @@ class EmergView extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        _buildUserImage(Images.woman1, 56.0, 30.0),
-                        _buildUserImage(Images.woman2, 56.0, 90.0),
-                        _buildUserImage(Images.man3, 56.0, 30.0),
-                        _buildUserImage(Images.woman4, 56.0, 90.0),
-                        _buildUserImage(Images.woman4, 56.0, 30.0),
+                        _buildUserImage(Images.woman1, 56.0, 30.0, 1),
+                        _buildUserImage(Images.woman2, 56.0, 90.0, 2),
+                        _buildUserImage(Images.man3, 56.0, 30.0, 3),
+                        _buildUserImage(Images.woman4, 56.0, 90.0, 4),
+                        _buildUserImage(Images.woman4, 56.0, 30.0, 5),
                       ],
                     ),
                   ],
@@ -162,15 +167,7 @@ class EmergView extends StatelessWidget {
               padding: EdgeInsets.only(bottom: 30.0),
               child: GestureDetector(
                   onTap: () async {
-                    Position position = await Geolocator.getCurrentPosition(
-                        desiredAccuracy: LocationAccuracy.high);
-                    //sendSMS(message: 'test', recipients: ['0766721100']);
-                    SmsSender sender = new SmsSender();
-                    String address = '0703625454';
-                    sender.sendSms(new SmsMessage(address,
-                        'https://www.google.com/maps/?q=${position.latitude},${position.longitude}'));
-                    print(
-                        'https://www.google.com/maps/?q=${position.latitude},${position.longitude}');
+                    sendAll();
                   },
                   child: CircleAvatar(
                       backgroundColor: Colors.red,
@@ -200,19 +197,58 @@ class EmergView extends StatelessWidget {
     );
   }
 
-  Widget _buildUserImage(AssetImage img, double size, double margin) {
-    return Container(
-      margin: EdgeInsets.only(bottom: margin),
-      height: size,
-      width: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        image: DecorationImage(
-          image: img,
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
+  Widget _buildUserImage(
+      AssetImage img, double size, double margin, int person) {
+    return GestureDetector(
+        onTap: () async {
+          SharedPreferences sharedPref = await SharedPreferences.getInstance();
+          String number = sharedPref.getString('$person');
+          number != null ? sendMsg(number) : null;
+        },
+        child: Container(
+          margin: EdgeInsets.only(bottom: margin),
+          height: size,
+          width: size,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            image: DecorationImage(
+              image: img,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ));
+  }
+
+  void navigateToProfile(context) async {
+    Navigator.pushNamed(context, routes.manageViewRoute);
+    SharedPreferences sharedPref = await SharedPreferences.getInstance();
+    sharedPref.setString('1', '0766721100');
+  }
+
+  void sendMsg(String number) async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    //sendSMS(message: 'test', recipients: ['0766721100']);
+    SmsSender sender = new SmsSender();
+    String address = number;
+    sender.sendSms(new SmsMessage(address,
+        'https://www.google.com/maps/?q=${position.latitude},${position.longitude}'));
+    print(
+        'https://www.google.com/maps/?q=${position.latitude},${position.longitude}');
+  }
+
+  void sendAll() async {
+    SharedPreferences sharedPref = await SharedPreferences.getInstance();
+    List<String> numbers = [];
+    for (int i = 1; i < 6; i++) {
+      String number = sharedPref.getString('$i');
+      print(number);
+      if (number == null) break;
+      numbers.add(number);
+    }
+    numbers.forEach((element) async {
+      sendMsg(element);
+    });
   }
 }
 
