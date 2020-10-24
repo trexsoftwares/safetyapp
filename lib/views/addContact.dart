@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:safetyapp/utils.dart/utils.dart';
 import 'package:safetyapp/_routing/routes.dart' as routes;
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddContactView extends StatefulWidget {
   @override
@@ -231,18 +230,18 @@ class _AddContactViewState extends State<AddContactView>
   }
 
   _save(String name, String relationship, String telephone) async {
-    final directory = await getApplicationDocumentsDirectory();
-    try {
-      final data = File('${directory.path}/list.txt');
-      String names = await data.readAsString();
-      await data.writeAsString(
-          names + "@@@" + name + '@@@' + 'relationship' + '@@@' + telephone);
-    } catch (e) {
-      final list = File('${directory.path}/list.txt');
-      final text = '$name' + '@@@' + '$relationship' + '@@@' + '$telephone';
-
-      await list.writeAsString(text);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int i = 1;
+    while (true) {
+      var data = prefs.getStringList(i.toString()) ?? 0;
+      if (data == 0) {
+        prefs.setStringList(i.toString(), [name, relationship, telephone]);
+        break;
+      } else {
+        i = i + 1;
+      }
     }
+
     print('saved');
   }
 }

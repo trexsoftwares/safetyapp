@@ -1,11 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:safetyapp/utils.dart/utils.dart';
 import 'package:safetyapp/_routing/routes.dart' as routes;
-import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ManageView extends StatefulWidget {
   @override
@@ -17,7 +15,8 @@ class _ManageViewState extends State<ManageView>
   TabController tabController;
   String data = '';
   @override
-  void initState() async {
+  void initState() {
+    getData();
     super.initState();
     tabController = TabController(vsync: this, length: 2);
   }
@@ -111,7 +110,20 @@ class _ManageViewState extends State<ManageView>
                         )
                       ],
                     ),*/
+                    FutureBuilder(
+                      future: getData(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Center(
+                              child: Container(
+                                  child: Text('hasData: ${snapshot.data}')));
+                        } else {
+                          // We can show the loading view until the data comes back.
 
+                          return CircularProgressIndicator();
+                        }
+                      },
+                    ),
                     Container(
                       padding: EdgeInsets.only(top: 20.0, bottom: 100.0),
                       child: Column(
@@ -131,7 +143,6 @@ class _ManageViewState extends State<ManageView>
                         ],
                       ),
                     ),
-                    Text(data)
                   ],
                 ),
               ),
@@ -140,6 +151,19 @@ class _ManageViewState extends State<ManageView>
         ),
       ),
     );
+  }
+
+  getData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int i = 1;
+    while (true) {
+      var data = prefs.getStringList(i.toString()) ?? 0;
+      if (data == 0) {
+        break;
+      } else {
+        return data;
+      }
+    }
   }
 
   Widget _buildUserImage(AssetImage img, double size, double margin) {
