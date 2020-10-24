@@ -128,8 +128,7 @@ class HomeView extends StatelessWidget {
                             SharedPreferences sharedPref =
                                 await SharedPreferences.getInstance();
                             await sharedPref.setBool('logged', true);
-                            Navigator.pushNamed(
-                                context, routes.manageViewRoute);
+                            Navigator.pushNamed(context, routes.emergViewRoute);
                           });
                         }),
                     /*_buildIconCard(FontAwesomeIcons.google),

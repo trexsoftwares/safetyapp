@@ -49,6 +49,7 @@ dependencies:
   intent: ^1.4.0
   #flutter_sms: ^2.0.1+2
   sms: ^0.2.4
+  connectivity: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -106,6 +107,8 @@ flutter:
     - assets/images/woman3.jpg
     - assets/images/woman4.jpg
     - assets/images/woman5.jpg
+    - assets/images/icon.jpg
+    - assets/images/person.jpg
 
   fonts:
     - family: Quicksand
