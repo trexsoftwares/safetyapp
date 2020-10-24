@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,8 @@ import 'package:safetyapp/utils.dart/utils.dart';
 import 'package:safetyapp/_routing/routes.dart' as routes;
 import 'package:safetyapp/views/emerg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../services/database.dart';
 
 class ManageView extends StatefulWidget {
   @override
@@ -16,6 +19,9 @@ class _ManageViewState extends State<ManageView>
     with SingleTickerProviderStateMixin {
   TabController tabController;
   String data = '';
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
+  static final String uuid = _auth.currentUser.uid;
+  static final DatabaseService databaseService = DatabaseService(uuid);
   @override
   void initState() {
     super.initState();
@@ -121,7 +127,30 @@ class _ManageViewState extends State<ManageView>
             Positioned(
                 top: 50,
                 right: 15,
-                child: _buildUserImage(Images.man2, 100.0, 50.0)),
+                child: FutureBuilder(
+                    future: databaseService.proPicURL(),
+                    builder: (context, snap) {
+                      if (snap.hasData) {
+                        return GestureDetector(
+                            onTap: () {
+                              //navigateToProfile(context);
+                            },
+                            child: _buildUserImage(snap.data, 100.0, 50.0));
+                      } else {
+                        return Container(
+                          height: 90.0,
+                          width: 90.0,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(image: Images.icon),
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 5.0,
+                            ),
+                          ),
+                        );
+                      }
+                    })),
             Positioned(
               top: 40.0,
               left: 0.0,
@@ -232,17 +261,19 @@ class _ManageViewState extends State<ManageView>
     return tabs;
   }
 
-  Widget _buildUserImage(AssetImage img, double size, double margin) {
+  Widget _buildUserImage(String url, double size, double margin) {
     return Container(
       alignment: Alignment.centerRight,
       height: size,
       width: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        image: DecorationImage(
-          image: img,
-          fit: BoxFit.cover,
-        ),
+      child: CircleAvatar(
+        radius: size / 2,
+        //shape: BoxShape.circle,
+        //image: DecorationImage(
+        //image: img,
+        //fit: BoxFit.cover,
+        //),
+        backgroundImage: NetworkImage(url),
       ),
     );
   }

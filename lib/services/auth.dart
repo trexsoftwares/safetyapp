@@ -32,6 +32,10 @@ class AppAuth {
       final User user = authResult.user;
       await databaseService.register(user.email, user.displayName.split(' ')[0],
           user.displayName.split(' ')[1], user.uid, user.photoURL);
+      if (user != null) {
+        DatabaseService dbs = DatabaseService(user.uid);
+        await dbs.getContacts();
+      }
       return AuthStatus(user, '');
     } catch (e) {
       return AuthStatus(null, _extractMessage(e));
@@ -77,6 +81,10 @@ class AppAuth {
     try {
       var result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
+      if (result.user.uid != null) {
+        DatabaseService dbs = DatabaseService(result.user.uid);
+        await dbs.getContacts();
+      }
       return AuthStatus(result.user, "");
     } catch (e) {
       //print(e);

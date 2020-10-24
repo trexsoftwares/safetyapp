@@ -235,6 +235,13 @@ class EmergView extends StatelessWidget {
   }
 
   void navigateToProfile(context) async {
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    User user = _auth.currentUser;
+
+    /*if (user != null) {
+      DatabaseService databaseService = DatabaseService(user.uid);
+      await databaseService.getContacts();
+    }*/
     Navigator.pushNamed(context, routes.manageViewRoute);
     //SharedPreferences sharedPref = await SharedPreferences.getInstance();
     //await sharedPref.setBool('logged', false);
