@@ -243,7 +243,7 @@ class _AddContactViewState extends State<AddContactView>
     FirebaseAuth _auth = FirebaseAuth.instance;
     User user = _auth.currentUser;
     user != null ? databaseService = DatabaseService(user.uid) : null;
-
+    int i = 0;
     while (true) {
       var data = prefs.getStringList(i.toString()) ?? 0;
       if (data == 0) {
