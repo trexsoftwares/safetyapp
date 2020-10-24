@@ -1,8 +1,10 @@
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:safetyapp/utils.dart/utils.dart';
 import 'package:safetyapp/_routing/routes.dart' as routes;
+import 'package:safetyapp/views/emerg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ManageView extends StatefulWidget {
@@ -31,8 +33,35 @@ class _ManageViewState extends State<ManageView>
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.primaryBlack,
-        onPressed: () {
-          Navigator.pushNamed(context, routes.addContactViewRoute);
+        onPressed: () async {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+
+          int count = 0;
+          for (int i = 0; i < 5; i++) {
+            var data = prefs.getStringList(i.toString()) ?? 0;
+            if (data == 0) {
+              Navigator.pushNamed(context, routes.addContactViewRoute);
+              break;
+            } else {
+              count = count + 1;
+            }
+            if (count == 5) {
+              Flushbar(
+                title: 'Limit Reached',
+                message: 'You can only add up to 5 contacts',
+                icon: Icon(
+                  Icons.error_outline,
+                  size: 28,
+                  color: Colors.green.shade300,
+                ),
+                leftBarIndicatorColor: Colors.blue.shade300,
+                duration: Duration(seconds: 3),
+              )..show(context);
+            }
+
+// Find the Scaffold in the widget tree and use it to show a SnackBar.
+
+          }
         },
         child: Icon(
           Icons.add,
@@ -42,6 +71,19 @@ class _ManageViewState extends State<ManageView>
       body: SingleChildScrollView(
         child: Stack(
           children: <Widget>[
+            Positioned(
+              top: 35.0,
+              left: 20.0,
+              child: IconButton(
+                onPressed: () => Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => EmergView())),
+                icon: Icon(
+                  LineIcons.long_arrow_left,
+                  color: AppColors.primaryBlack,
+                  size: 35.0,
+                ),
+              ),
+            ),
             Container(
               height: MediaQuery.of(context).size.height,
             ),
@@ -82,16 +124,19 @@ class _ManageViewState extends State<ManageView>
                 child: _buildUserImage(Images.man2, 100.0, 50.0)),
             Positioned(
               top: 40.0,
-              left: 20.0,
+              left: 0.0,
               bottom: 0.0,
               child: Container(
-                padding: EdgeInsets.only(left: 15.0, top: 50.0),
+                padding: EdgeInsets.only(left: 0.0, top: 50.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Texts.headerTextContact,
+                    Container(
+                        padding: EdgeInsets.only(
+                            left: MediaQuery.of(context).size.width - 360),
+                        child: Texts.headerTextContact),
                     SizedBox(
-                      height: 10.0,
+                      height: 30.0,
                     ),
                     /*   TabBar(
                       controller: tabController,
@@ -113,14 +158,18 @@ class _ManageViewState extends State<ManageView>
                       future: getData(context),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
-                          return Center(child: Column(children: snapshot.data));
+                          return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: snapshot.data);
                         } else {
                           // We can show the loading view until the data comes back.
 
-                          return CircularProgressIndicator();
+                          return _buildTile(Color(0xFF6967B8),
+                              'No Contacts Added', '', '', context);
                         }
                       },
                     ),
+                    Card(),
                   ],
                 ),
               ),
@@ -146,12 +195,32 @@ class _ManageViewState extends State<ManageView>
       var data = prefs.getStringList(i.toString()) ?? 0;
       if (data == 0) {
         print("NO DATA");
-        break;
       } else {
         List info = prefs.getStringList(i.toString());
         print(info);
-        tabs.add(
-            _buildExchangeRate(colours[i], info[0], info[1], info[2], context));
+        tabs.add(Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+          IconButton(
+            color: Colors.red,
+            onPressed: () {
+              setState(() {});
+              prefs.remove(i.toString());
+              Flushbar(
+                title: 'Done',
+                message: 'Deleted Contact Successfully',
+                icon: Icon(
+                  Icons.beenhere,
+                  size: 28,
+                  color: Colors.green.shade300,
+                ),
+                leftBarIndicatorColor: Colors.blue.shade300,
+                duration: Duration(seconds: 3),
+              )..show(context);
+            },
+            icon: Icon(Icons.delete),
+          ),
+          _buildTile(colours[i], info[0], info[1], info[2], context)
+        ]));
+
         tabs.add(SizedBox(
           height: 10,
         ));
@@ -179,10 +248,10 @@ class _ManageViewState extends State<ManageView>
   }
 }
 
-Widget _buildExchangeRate(Color color, String currencyName, String currencyCode,
-    String amount, BuildContext context) {
+Widget _buildTile(Color color, String name, String relationship,
+    String telephone, BuildContext context) {
   return Container(
-    height: 100.0,
+    height: 80.0,
     width: MediaQuery.of(context).size.width - 60.0,
     decoration: BoxDecoration(
       color: color.withAlpha(220),
@@ -204,27 +273,27 @@ Widget _buildExchangeRate(Color color, String currencyName, String currencyCode,
           ),
         ),
         Positioned(
-          top: 20.0,
+          top: 15.0,
           left: 20.0,
           child: Container(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  currencyName,
+                  name,
                   style: TextStyle(
                     fontFamily: Fonts.primaryFont,
                     color: Colors.white.withOpacity(0.8),
                     fontWeight: FontWeight.bold,
-                    fontSize: 24.0,
+                    fontSize: 20.0,
                   ),
                 ),
                 Text(
-                  currencyCode,
+                  relationship,
                   style: TextStyle(
                     fontFamily: Fonts.primaryFont,
                     color: Colors.white.withOpacity(0.8),
-                    fontSize: 19.0,
+                    fontSize: 18.0,
                   ),
                 )
               ],
@@ -232,15 +301,15 @@ Widget _buildExchangeRate(Color color, String currencyName, String currencyCode,
           ),
         ),
         Positioned(
-          top: 20.0,
+          top: 23.0,
           right: 20.0,
           child: Text(
-            amount,
+            telephone,
             style: TextStyle(
               fontFamily: Fonts.primaryFont,
               color: Colors.white.withOpacity(0.8),
               fontWeight: FontWeight.bold,
-              fontSize: 24.0,
+              fontSize: 22.0,
             ),
           ),
         ),
