@@ -74,8 +74,20 @@ class EmergView extends StatelessWidget {
               )
             ],
           ),
+          FlatButton(
+              onPressed: () {
+                navigateToProfile(context);
+              },
+              child: Container(
+                padding: const EdgeInsets.only(top: 1.0),
+                child: Column(
+                  children: <Widget>[
+                    Texts.profile,
+                  ],
+                ),
+              )),
           Container(
-            padding: const EdgeInsets.only(top: 32.0),
+            padding: const EdgeInsets.only(top: 0.0),
             child: Column(
               children: <Widget>[
                 Texts.welcomeText,
@@ -205,24 +217,27 @@ class EmergView extends StatelessWidget {
           String number = sharedPref.getString('$person');
           number != null ? sendMsg(number) : null;
         },
-        child: Container(
-          margin: EdgeInsets.only(bottom: margin),
-          height: size,
-          width: size,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            image: DecorationImage(
-              image: img,
-              fit: BoxFit.cover,
+        child: Column(children: <Widget>[
+          Text('Person'),
+          Container(
+            margin: EdgeInsets.only(bottom: margin),
+            height: size,
+            width: size,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                image: img,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-        ));
+        ]));
   }
 
   void navigateToProfile(context) async {
     Navigator.pushNamed(context, routes.manageViewRoute);
     SharedPreferences sharedPref = await SharedPreferences.getInstance();
-    sharedPref.setString('1', '0766721100');
+    await sharedPref.setBool('logged', false);
   }
 
   void sendMsg(String number) async {

@@ -28,12 +28,38 @@ class DatabaseService {
     });
   }
 
-  Future addContacts(String name, String relationship, String number) async {
+  Future addContacts(
+      String name, String relationship, String number, String pos) async {
     return await userCollection
         .doc(uuid)
         .collection('Contacts')
-        .doc(relationship)
+        .doc(pos)
         .set({'name': name, 'relationship': relationship, 'number': number});
+  }
+
+  Future editContacts(
+      String name, String relationship, String number, String pos) async {
+    return await userCollection
+        .doc(uuid)
+        .collection('Contacts')
+        .doc(pos)
+        .update({'name': name, 'relationship': relationship, 'number': number});
+  }
+
+  Future deleteContacts(String pos) async {
+    return await userCollection
+        .doc(uuid)
+        .collection('Contacts')
+        .doc(pos)
+        .delete();
+  }
+
+  Future getContacts(String pos) async {
+    var contacts = await userCollection.doc(uuid).collection('Contacts').get();
+    List<Map<int, Map<String, String>>> contactsDic = [];
+    for (int i = 0; i < contacts.docs.length; i++) {
+      //contactsDic[i] = {contacts.docs[i].data()['']};
+    }
   }
 
   Future setProPic() async {

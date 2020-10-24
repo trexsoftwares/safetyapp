@@ -38,6 +38,15 @@ class Texts {
       fontWeight: FontWeight.bold,
     ),
   );
+  static const profile = const Text(
+    'Profile',
+    style: TextStyle(
+      fontFamily: Fonts.primaryFont,
+      fontSize: 20.0,
+      color: Colors.blue,
+      fontWeight: FontWeight.bold,
+    ),
+  );
   static const loginText = const Text(
     'Login',
     style: TextStyle(
