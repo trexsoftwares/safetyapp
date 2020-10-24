@@ -240,7 +240,7 @@ class EmergView extends StatelessWidget {
     //await sharedPref.setBool('logged', false);
   }
 
-  void sendMsg(String number) async {
+  Future sendMsg(String number) async {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     //sendSMS(message: 'test', recipients: ['0766721100']);
@@ -255,15 +255,16 @@ class EmergView extends StatelessWidget {
   void sendAll() async {
     SharedPreferences sharedPref = await SharedPreferences.getInstance();
     List<String> numbers = [];
-    for (int i = 1; i < 6; i++) {
-      String number = sharedPref.getString('$i');
-      print(number);
+    for (int i = 0; i < 5; i++) {
+      List<String> number = sharedPref.getStringList('$i');
       if (number == null) break;
-      numbers.add(number);
+      print(number);
+      print(number[2]);
+
+      numbers.add(number[2]);
+      print(numbers);
+      await sendMsg(number[2]);
     }
-    numbers.forEach((element) async {
-      sendMsg(element);
-    });
   }
 }
 
