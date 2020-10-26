@@ -76,6 +76,20 @@ class _ManageViewState extends State<ManageView>
         child: Stack(
           children: <Widget>[
             Positioned(
+              right: 10,
+              bottom: 80,
+              child: Text('Add New Contact',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
+            Positioned(
+                left: MediaQuery.of(context).size.width / 2.5,
+                bottom: 10,
+                child: FlatButton(
+                  onPressed: () {},
+                  child: Text('Logout',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                )),
+            Positioned(
               top: 35.0,
               left: 20.0,
               child: IconButton(
