@@ -30,10 +30,15 @@ class AppAuth {
     try {
       final authResult = await _auth.signInWithCredential(credential);
       final User user = authResult.user;
-      await databaseService.register(user.email, user.displayName.split(' ')[0],
-          user.displayName.split(' ')[1], user.uid, user.photoURL);
+
       if (user != null) {
         DatabaseService dbs = DatabaseService(user.uid);
+        await databaseService.register(
+            user.email,
+            user.displayName.split(' ')[0],
+            user.displayName.split(' ')[1],
+            user.uid,
+            user.photoURL);
         await dbs.getData();
       }
       return AuthStatus(user, '');
