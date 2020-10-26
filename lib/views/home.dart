@@ -120,7 +120,7 @@ class HomeView extends StatelessWidget {
                     ),
                     GestureDetector(
                         child: _buildIconCard(FontAwesomeIcons.google),
-                        onLongPress: () async {
+                        onTap: () async {
                           final AppAuth appAuth = AppAuth(_auth);
                           await appAuth
                               .registerWithGoogle()
@@ -171,8 +171,7 @@ class HomeView extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.0),
         elevation: 34.0,
         shadowColor: Colors.white70,
-        child: FlatButton(
-          onPressed: () {},
+        child: Container(
           child: Icon(
             icon,
             color: AppColors.secondaryColor,

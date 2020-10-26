@@ -9,6 +9,8 @@ import 'package:safetyapp/_routing/routes.dart' as routes;
 import 'package:safetyapp/views/emerg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../services/auth.dart';
+
 class ManageView extends StatefulWidget {
   @override
   _ManageViewState createState() => _ManageViewState();
@@ -85,7 +87,15 @@ class _ManageViewState extends State<ManageView>
                 left: MediaQuery.of(context).size.width / 2.5,
                 bottom: 10,
                 child: FlatButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    try {
+                      FirebaseAuth _auth = FirebaseAuth.instance;
+                      AppAuth appAuth = AppAuth(_auth);
+                      await appAuth.signOut();
+                      Navigator.of(context)
+                          .pushReplacementNamed(routes.homeViewRoute);
+                    } catch (e) {}
+                  },
                   child: Text('Logout',
                       style: TextStyle(fontWeight: FontWeight.bold)),
                 )),
@@ -418,8 +428,10 @@ Widget _buildTile(Color color, String name, String relationship,
     String telephone, BuildContext context, int i) {
   TextEditingController nameController = new TextEditingController();
   TextEditingController relationshipController = new TextEditingController();
-
   TextEditingController numberController = new TextEditingController();
+  nameController.text = name;
+  relationshipController.text = relationship;
+  numberController.text = telephone;
 
   return GestureDetector(
       onTap: () async {
@@ -557,6 +569,19 @@ Widget _buildTile(Color color, String name, String relationship,
                         relationshipController.text,
                         numberController.text
                       ]);
+                      try {
+                        FirebaseAuth _auth = FirebaseAuth.instance;
+                        User user = _auth.currentUser;
+                        if (user != null) {
+                          DatabaseService databaseService =
+                              DatabaseService(user.uid);
+                          await databaseService.addEditContacts(
+                              nameController.text,
+                              relationshipController.text,
+                              numberController.text,
+                              i.toString());
+                        }
+                      } catch (e) {}
                       Navigator.pop(context);
                     }
                   })
