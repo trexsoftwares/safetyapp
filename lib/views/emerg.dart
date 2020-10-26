@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter_sms/flutter_sms.dart';
 import 'package:geolocator/geolocator.dart';
@@ -108,11 +109,11 @@ class EmergView extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        _buildUserImage(Images.woman1, 56.0, 30.0, 1),
-                        _buildUserImage(Images.woman2, 56.0, 90.0, 2),
-                        _buildUserImage(Images.man3, 56.0, 30.0, 3),
-                        _buildUserImage(Images.woman4, 56.0, 90.0, 4),
-                        _buildUserImage(Images.woman4, 56.0, 30.0, 5),
+                        _buildUserImage(Images.woman1, 56.0, 30.0, 1, context),
+                        _buildUserImage(Images.woman2, 56.0, 90.0, 2, context),
+                        _buildUserImage(Images.man3, 56.0, 30.0, 3, context),
+                        _buildUserImage(Images.woman4, 56.0, 90.0, 4, context),
+                        _buildUserImage(Images.woman4, 56.0, 30.0, 5, context),
                       ],
                     ),
                   ],
@@ -179,7 +180,7 @@ class EmergView extends StatelessWidget {
               padding: EdgeInsets.only(bottom: 30.0),
               child: GestureDetector(
                   onTap: () async {
-                    sendAll();
+                    sendAll(context);
                   },
                   child: CircleAvatar(
                       backgroundColor: Colors.red,
@@ -213,12 +214,25 @@ class EmergView extends StatelessWidget {
   }
 
   Widget _buildUserImage(
-      AssetImage img, double size, double margin, int person) {
+      AssetImage img, double size, double margin, int person, context) {
     return GestureDetector(
         onTap: () async {
           SharedPreferences sharedPref = await SharedPreferences.getInstance();
-          String number = sharedPref.getString('$person');
-          number != null ? sendMsg(number) : null;
+          List<String> number = sharedPref.getStringList('$person');
+          if (number[2] != null) {
+            sendMsg(number[2]);
+            Flushbar(
+              title: 'Sent',
+              message: 'Sent Message Successfully to ' + number[0],
+              icon: Icon(
+                Icons.beenhere,
+                size: 28,
+                color: Colors.green.shade300,
+              ),
+              leftBarIndicatorColor: Colors.blue.shade300,
+              duration: Duration(seconds: 3),
+            )..show(context);
+          }
         },
         child: Column(children: <Widget>[
           Text('Person'),
@@ -262,7 +276,7 @@ class EmergView extends StatelessWidget {
         'https://www.google.com/maps/?q=${position.latitude},${position.longitude}');
   }
 
-  void sendAll() async {
+  void sendAll(context) async {
     SharedPreferences sharedPref = await SharedPreferences.getInstance();
     List<String> numbers = [];
     for (int i = 0; i < 5; i++) {
@@ -275,6 +289,17 @@ class EmergView extends StatelessWidget {
       print(numbers);
       await sendMsg(number[2]);
     }
+    Flushbar(
+      title: 'Sent',
+      message: 'Sent Message to all Contacts Successfully',
+      icon: Icon(
+        Icons.beenhere,
+        size: 28,
+        color: Colors.green.shade300,
+      ),
+      leftBarIndicatorColor: Colors.blue.shade300,
+      duration: Duration(seconds: 3),
+    )..show(context);
   }
 }
 
