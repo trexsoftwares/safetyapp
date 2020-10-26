@@ -13,8 +13,9 @@ import 'package:sms/sms.dart';
 
 class EmergView extends StatelessWidget {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
-  static final String uuid = _auth.currentUser.uid;
-  static final DatabaseService databaseService = DatabaseService(uuid);
+  static final User user = _auth.currentUser;
+  static final DatabaseService databaseService =
+      DatabaseService(user != null ? user.uid : 'guest');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
