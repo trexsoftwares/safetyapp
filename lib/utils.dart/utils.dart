@@ -133,6 +133,15 @@ class Texts {
       fontWeight: FontWeight.bold,
     ),
   );
+  static const editContact = const Text(
+    'Edit Contact',
+    style: TextStyle(
+      fontFamily: Fonts.primaryFont,
+      fontSize: 18.0,
+      color: AppColors.secondaryColor,
+      fontWeight: FontWeight.bold,
+    ),
+  );
 
   static const signup = const Text(
     'SignUp',
