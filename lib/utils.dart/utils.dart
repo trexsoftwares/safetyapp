@@ -39,7 +39,7 @@ class Texts {
     ),
   );
   static const profile = const Text(
-    'Profile',
+    'My Contacts',
     style: TextStyle(
       fontFamily: Fonts.primaryFont,
       fontSize: 20.0,
