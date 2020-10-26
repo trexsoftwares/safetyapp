@@ -19,7 +19,7 @@ class DatabaseService {
 ///////////////////////////Database tasks////////////////////////////////////
   Future register(String email, String fName, String lName, String uid,
       String photoUrl) async {
-    return await userCollection.doc(uuid).set({
+    return await userCollection.doc(uid).set({
       'email': email,
       'fName': fName,
       'lName': lName,
@@ -28,12 +28,14 @@ class DatabaseService {
     });
   }
 
-  Future syncContacts() async {
+  Future syncData() async {
     SharedPreferences sharedPref = await SharedPreferences.getInstance();
     for (int i = 0; i < 5; i++) {
       try {
         List<String> contact = sharedPref.getStringList('$i');
+        String message = sharedPref.getString('message');
         await addEditContacts(contact[0], contact[1], contact[2], '$i');
+        await setEditMessage(message);
         if (contact == null) {
           await addEditContacts(contact[0], contact[1], contact[2], '$i');
         }
@@ -52,6 +54,10 @@ class DatabaseService {
         number != null ? number : contact[2]
       ]
     });
+  }
+
+  Future setEditMessage(String message) async {
+    return await userCollection.doc(uuid).update({'message': message});
   }
 
   Future deleteContacts(String pos) async {
