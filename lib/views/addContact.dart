@@ -209,11 +209,7 @@ class _AddContactViewState extends State<AddContactView>
                                             nameController.text,
                                             relationController.text,
                                             phoneController.text);
-                                        Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ManageView()));
+                                        Navigator.pop(context);
                                       }
                                     },
                                     child: Texts.addContact,

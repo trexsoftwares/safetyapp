@@ -34,6 +34,7 @@ class _ManageViewState extends State<ManageView>
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
+        elevation: 5,
         backgroundColor: AppColors.primaryBlack,
         onPressed: () async {
           SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -73,6 +74,20 @@ class _ManageViewState extends State<ManageView>
       body: SingleChildScrollView(
         child: Stack(
           children: <Widget>[
+            Positioned(
+                bottom: 10,
+                left: MediaQuery.of(context).size.width / 2.5,
+                child: FlatButton(
+                  onPressed: () {},
+                  child: Text('Logout'),
+                )),
+            Positioned(
+              bottom: 80,
+              right: 10,
+              child: Text('Add New Contact',
+                  style: TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.bold)),
+            ),
             Positioned(
               top: 35.0,
               left: 20.0,
