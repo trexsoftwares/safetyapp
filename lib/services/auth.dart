@@ -40,6 +40,7 @@ class AppAuth {
             user.uid,
             user.photoURL);
         await dbs.getData();
+        await dbs.syncData();
       }
       return AuthStatus(user, '');
     } catch (e) {
