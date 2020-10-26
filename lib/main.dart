@@ -19,6 +19,11 @@ void main() async {
   Firebase.initializeApp().whenComplete(() async {
     FirebaseAuth _auth = FirebaseAuth.instance;
     User user = _auth.currentUser;
+
+    if (user != null) {
+      DatabaseService databaseService = DatabaseService(user.uid);
+      await databaseService.syncContacts();
+    }
     print(logged);
     print(logintype);
     logged

@@ -253,9 +253,7 @@ class _AddContactViewState extends State<AddContactView>
             await databaseService.addEditContacts(
                 name, relationship, telephone, '$i');
           }
-        } catch (e) {
-          print(e);
-        }
+        } catch (e) {}
         break;
       } else {
         i = i + 1;
