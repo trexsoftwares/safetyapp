@@ -345,9 +345,17 @@ class _ManageViewState extends State<ManageView>
         tabs.add(Row(mainAxisAlignment: MainAxisAlignment.start, children: [
           IconButton(
             color: Colors.red,
-            onPressed: () {
+            onPressed: () async {
               setState(() {});
               prefs.remove(i.toString());
+              try {
+                FirebaseAuth _auth = FirebaseAuth.instance;
+                User user = _auth.currentUser;
+                if (user != null) {
+                  DatabaseService databaseService = DatabaseService(user.uid);
+                  await databaseService.deleteContacts(i.toString());
+                }
+              } catch (e) {}
               Flushbar(
                 title: 'Done',
                 message: 'Deleted Contact Successfully',
