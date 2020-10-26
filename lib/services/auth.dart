@@ -95,10 +95,10 @@ class AppAuth {
   //sign out
 
   Future signOut() async {
+    SharedPreferences sharedPref = await SharedPreferences.getInstance();
+    await sharedPref.setBool('logged', false);
     try {
       return await _auth.signOut().whenComplete(() async {
-        SharedPreferences sharedPref = await SharedPreferences.getInstance();
-        await sharedPref.setBool('logged', false);
         await sharedPref.setString('loginType', null);
       });
     } catch (e) {
