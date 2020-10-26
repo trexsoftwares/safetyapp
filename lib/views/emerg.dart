@@ -269,6 +269,7 @@ class EmergView extends StatelessWidget {
   Future sendMsg(String number) async {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
+    // pref =await SharedPreferences.getInstance();
     //sendSMS(message: 'test', recipients: ['0766721100']);
     SmsSender sender = new SmsSender();
     String address = number;
