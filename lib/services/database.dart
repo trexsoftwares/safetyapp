@@ -19,7 +19,7 @@ class DatabaseService {
 ///////////////////////////Database tasks////////////////////////////////////
   Future register(String email, String fName, String lName, String uid,
       String photoUrl) async {
-    var data = await userCollection.doc(uuid).get();
+    var data = await userCollection.doc(uid).get();
     return !data.data().containsValue('email')
         ? await userCollection.doc(uid).set({
             'email': email,
