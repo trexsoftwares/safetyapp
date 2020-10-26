@@ -183,8 +183,11 @@ class EmergView extends StatelessWidget {
                   },
                   child: CircleAvatar(
                       backgroundColor: Colors.red,
-                      radius: MediaQuery.of(context).size.width / 4,
-                      child: Texts.alertText))),
+                      radius: MediaQuery.of(context).size.width / 4 + 5,
+                      child: CircleAvatar(
+                          backgroundColor: Colors.white,
+                          radius: MediaQuery.of(context).size.width / 4,
+                          child: Texts.alertText)))),
         ],
       ),
     );

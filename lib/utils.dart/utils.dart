@@ -68,7 +68,7 @@ class Texts {
   );
 
   static const welcomeText2 = const Text(
-    'Tap on a contact to send an alert. If you are to send to all, tap on Alert All!',
+    'Tap on a contact to send an alert. To send to all contacts, tap on Alert All!',
     style: TextStyle(
       fontFamily: Fonts.primaryFont,
       fontSize: 16.0,
@@ -126,6 +126,24 @@ class Texts {
   );
   static const addContact = const Text(
     'Submit',
+    style: TextStyle(
+      fontFamily: Fonts.primaryFont,
+      fontSize: 18.0,
+      color: AppColors.secondaryColor,
+      fontWeight: FontWeight.bold,
+    ),
+  );
+  static const editContact = const Text(
+    'Edit Contact',
+    style: TextStyle(
+      fontFamily: Fonts.primaryFont,
+      fontSize: 18.0,
+      color: AppColors.secondaryColor,
+      fontWeight: FontWeight.bold,
+    ),
+  );
+  static const emergencyMessage = const Text(
+    'Emergency Message',
     style: TextStyle(
       fontFamily: Fonts.primaryFont,
       fontSize: 18.0,
@@ -208,7 +226,7 @@ class Texts {
     'Add New Contact',
     style: TextStyle(
       fontFamily: Fonts.primaryFont,
-      fontSize: 30.0,
+      fontSize: 27.0,
       color: AppColors.primaryBlue,
       fontWeight: FontWeight.bold,
     ),
@@ -219,7 +237,7 @@ class Texts {
     style: TextStyle(
       fontFamily: Fonts.primaryFont,
       fontSize: 45,
-      color: Colors.yellow,
+      color: Colors.black,
       fontWeight: FontWeight.bold,
     ),
   );
