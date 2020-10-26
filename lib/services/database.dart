@@ -19,46 +19,64 @@ class DatabaseService {
 ///////////////////////////Database tasks////////////////////////////////////
   Future register(String email, String fName, String lName, String uid,
       String photoUrl) async {
-    return await userCollection.doc(uuid).set({
-      'email': email,
-      'fName': fName,
-      'lName': lName,
-      'uuid': uid,
-      'proPic': photoUrl
+    var data = await userCollection.doc(uuid).get();
+    return !data.data().containsValue('email')
+        ? await userCollection.doc(uid).set({
+            'email': email,
+            'fName': fName,
+            'lName': lName,
+            'uuid': uid,
+            'proPic': photoUrl
+          })
+        : true;
+  }
+
+  Future syncData() async {
+    SharedPreferences sharedPref = await SharedPreferences.getInstance();
+    for (int i = 0; i < 5; i++) {
+      try {
+        List<String> contact = sharedPref.getStringList('$i');
+        String message = sharedPref.getString('message');
+        await addEditContacts(contact[0], contact[1], contact[2], '$i');
+        await setEditMessage(message);
+        if (contact == null) {
+          await userCollection.doc(uuid).update({'$i': null});
+        }
+      } catch (e) {}
+    }
+  }
+
+  Future addEditContacts(
+      String name, String relationship, String number, String pos) async {
+    var data = await userCollection.doc(uuid).get();
+    var contact = data.data()[pos];
+    return await userCollection.doc(uuid).update({
+      pos: [
+        name != null ? name : contact[0],
+        relationship != null ? relationship : contact[1],
+        number != null ? number : contact[2]
+      ]
     });
   }
 
-  Future addContacts(
-      String name, String relationship, String number, String pos) async {
-    return await userCollection
-        .doc(uuid)
-        .collection('Contacts')
-        .doc(pos)
-        .set({'name': name, 'relationship': relationship, 'number': number});
-  }
-
-  Future editContacts(
-      String name, String relationship, String number, String pos) async {
-    return await userCollection
-        .doc(uuid)
-        .collection('Contacts')
-        .doc(pos)
-        .update({'name': name, 'relationship': relationship, 'number': number});
+  Future setEditMessage(String message) async {
+    return await userCollection.doc(uuid).update({'message': message});
   }
 
   Future deleteContacts(String pos) async {
-    return await userCollection
-        .doc(uuid)
-        .collection('Contacts')
-        .doc(pos)
-        .delete();
+    return await userCollection.doc(uuid).update({pos: null});
   }
 
-  Future getContacts(String pos) async {
-    var contacts = await userCollection.doc(uuid).collection('Contacts').get();
-    List<Map<int, Map<String, String>>> contactsDic = [];
-    for (int i = 0; i < contacts.docs.length; i++) {
-      //contactsDic[i] = {contacts.docs[i].data()['']};
+  Future getData() async {
+    var data = await userCollection.doc(uuid).get();
+    SharedPreferences sharedPref = await SharedPreferences.getInstance();
+    for (int i = 0; i < 5; i++) {
+      try {
+        print(data.data()['$i']);
+        await sharedPref.setStringList(i.toString(),
+            [data.data()['$i'][0], data.data()['$i'][1], data.data()['$i'][2]]);
+        await sharedPref.setString('message', data.data()['message']);
+      } catch (e) {}
     }
   }
 
