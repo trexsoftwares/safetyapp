@@ -225,7 +225,7 @@ class EmergView extends StatelessWidget {
             sendMsg(number[2]);
             Flushbar(
               title: 'Sent',
-              message: 'Sent Message Successfully to ' + number[0],
+              message: 'Message Sentss Successfully to ' + number[0],
               icon: Icon(
                 Icons.beenhere,
                 size: 28,
@@ -269,14 +269,18 @@ class EmergView extends StatelessWidget {
   Future sendMsg(String number) async {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
-    // pref =await SharedPreferences.getInstance();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String message = prefs.getString('message') ??
+        'Please Help Me I am in trouble!!!. This is my location now';
     //sendSMS(message: 'test', recipients: ['0766721100']);
     SmsSender sender = new SmsSender();
     String address = number;
-    sender.sendSms(new SmsMessage(address,
-        'https://www.google.com/maps/?q=${position.latitude},${position.longitude}'));
-    print(
-        'https://www.google.com/maps/?q=${position.latitude},${position.longitude}');
+    sender.sendSms(new SmsMessage(
+        address,
+        message +
+            '\nhttps://www.google.com/maps/?q=${position.latitude},${position.longitude}'));
+    print(message +
+        '\nshttps://www.google.com/maps/?q=${position.latitude},${position.longitude}');
   }
 
   void sendAll(context) async {

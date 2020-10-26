@@ -300,7 +300,7 @@ class _ManageViewState extends State<ManageView>
                                             title: Text(snapshot.data,
                                                 style: TextStyle(
                                                     color: Colors.black)),
-                                            subtitle: Text('CURRENT LOCATION',
+                                            subtitle: Text('\nCURRENT LOCATION',
                                                 style: TextStyle(
                                                     color: Colors.black)),
                                           ),
@@ -342,7 +342,7 @@ class _ManageViewState extends State<ManageView>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String data = prefs.get('message') ?? '0';
     if (data == '0') {
-      return 'Please Help Me I am in trouble!!!. This is my location now';
+      return 'Please Help Me I am in trouble!!!. This is my location now\n';
     } else {
       return data;
     }
