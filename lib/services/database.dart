@@ -19,13 +19,16 @@ class DatabaseService {
 ///////////////////////////Database tasks////////////////////////////////////
   Future register(String email, String fName, String lName, String uid,
       String photoUrl) async {
-    return await userCollection.doc(uid).set({
-      'email': email,
-      'fName': fName,
-      'lName': lName,
-      'uuid': uid,
-      'proPic': photoUrl
-    });
+    var data = await userCollection.doc(uuid).get();
+    return !data.data().containsValue('email')
+        ? await userCollection.doc(uid).set({
+            'email': email,
+            'fName': fName,
+            'lName': lName,
+            'uuid': uid,
+            'proPic': photoUrl
+          })
+        : true;
   }
 
   Future syncData() async {
@@ -37,7 +40,7 @@ class DatabaseService {
         await addEditContacts(contact[0], contact[1], contact[2], '$i');
         await setEditMessage(message);
         if (contact == null) {
-          await addEditContacts(contact[0], contact[1], contact[2], '$i');
+          await userCollection.doc(uuid).update({'$i': null});
         }
       } catch (e) {}
     }
@@ -64,9 +67,16 @@ class DatabaseService {
     return await userCollection.doc(uuid).update({pos: null});
   }
 
-  Future getContacts(String pos) async {
+  Future getContacts() async {
     var data = await userCollection.doc(uuid).get();
-    return data.data();
+    SharedPreferences sharedPref = await SharedPreferences.getInstance();
+    for (int i = 0; i < 5; i++) {
+      try {
+        print(data.data()['$i']);
+        await sharedPref.setStringList(i.toString(),
+            [data.data()['$i'][0], data.data()['$i'][1], data.data()['$i'][2]]);
+      } catch (e) {}
+    }
   }
 
   Future setProPic() async {
