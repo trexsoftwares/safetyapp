@@ -226,7 +226,7 @@ class Texts {
     'Add New Contact',
     style: TextStyle(
       fontFamily: Fonts.primaryFont,
-      fontSize: 30.0,
+      fontSize: 27.0,
       color: AppColors.primaryBlue,
       fontWeight: FontWeight.bold,
     ),
