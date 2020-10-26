@@ -188,6 +188,7 @@ class _ManageViewState extends State<ManageView>
                                     ? Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: <Widget>[
+                                          Texts.emergencyMessage,
                                           ListTile(
                                             leading:
                                                 Icon(Icons.message, size: 50),
@@ -250,13 +251,14 @@ class _ManageViewState extends State<ManageView>
                                     : Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: <Widget>[
+                                          Texts.emergencyMessage,
                                           ListTile(
                                             leading:
                                                 Icon(Icons.message, size: 50),
                                             title: Text(snapshot.data,
                                                 style: TextStyle(
                                                     color: Colors.black)),
-                                            subtitle: Text('LOCATION',
+                                            subtitle: Text('CURRENT LOCATION',
                                                 style: TextStyle(
                                                     color: Colors.black)),
                                           ),
