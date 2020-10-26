@@ -110,11 +110,11 @@ class EmergView extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        _buildUserImage(Images.woman1, 56.0, 30.0, 1, context),
-                        _buildUserImage(Images.woman2, 56.0, 90.0, 2, context),
-                        _buildUserImage(Images.man3, 56.0, 30.0, 3, context),
-                        _buildUserImage(Images.woman4, 56.0, 90.0, 4, context),
-                        _buildUserImage(Images.woman4, 56.0, 30.0, 5, context),
+                        _buildUserImage(Images.woman1, 56.0, 30.0, 0, context),
+                        _buildUserImage(Images.woman2, 56.0, 90.0, 1, context),
+                        _buildUserImage(Images.man3, 56.0, 30.0, 2, context),
+                        _buildUserImage(Images.woman4, 56.0, 90.0, 3, context),
+                        _buildUserImage(Images.woman4, 56.0, 30.0, 4, context),
                       ],
                     ),
                   ],
@@ -220,7 +220,8 @@ class EmergView extends StatelessWidget {
         onTap: () async {
           SharedPreferences sharedPref = await SharedPreferences.getInstance();
           List<String> number = sharedPref.getStringList('$person');
-          if (number[2] != null) {
+          print(number);
+          if (number != null) {
             sendMsg(number[2]);
             Flushbar(
               title: 'Sent',
