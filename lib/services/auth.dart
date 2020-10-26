@@ -34,7 +34,7 @@ class AppAuth {
           user.displayName.split(' ')[1], user.uid, user.photoURL);
       if (user != null) {
         DatabaseService dbs = DatabaseService(user.uid);
-        await dbs.getContacts();
+        await dbs.getData();
       }
       return AuthStatus(user, '');
     } catch (e) {
@@ -83,7 +83,7 @@ class AppAuth {
           email: email, password: password);
       if (result.user.uid != null) {
         DatabaseService dbs = DatabaseService(result.user.uid);
-        await dbs.getContacts();
+        await dbs.getData();
       }
       return AuthStatus(result.user, "");
     } catch (e) {

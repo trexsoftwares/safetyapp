@@ -67,7 +67,7 @@ class DatabaseService {
     return await userCollection.doc(uuid).update({pos: null});
   }
 
-  Future getContacts() async {
+  Future getData() async {
     var data = await userCollection.doc(uuid).get();
     SharedPreferences sharedPref = await SharedPreferences.getInstance();
     for (int i = 0; i < 5; i++) {
@@ -75,6 +75,7 @@ class DatabaseService {
         print(data.data()['$i']);
         await sharedPref.setStringList(i.toString(),
             [data.data()['$i'][0], data.data()['$i'][1], data.data()['$i'][2]]);
+        await sharedPref.setString('message', data.data()['message']);
       } catch (e) {}
     }
   }

@@ -20,9 +20,13 @@ void main() async {
     FirebaseAuth _auth = FirebaseAuth.instance;
     User user = _auth.currentUser;
 
-    if (user != null) {
-      DatabaseService databaseService = DatabaseService(user.uid);
-      await databaseService.syncData();
+    try {
+      if (user != null) {
+        DatabaseService databaseService = DatabaseService(user.uid);
+        await databaseService.syncData();
+        await databaseService.getData();
+      }
+    } catch (e) {}
     print(logged);
     print(logintype);
     logged
