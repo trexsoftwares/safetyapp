@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:safetyapp/services/database.dart';
 import 'package:safetyapp/utils.dart/utils.dart';
 import 'package:safetyapp/_routing/routes.dart' as routes;
 import 'package:safetyapp/views/emerg.dart';
@@ -238,6 +240,22 @@ class _ManageViewState extends State<ManageView>
                                                             .getInstance();
                                                     prefs.setString('message',
                                                         messageController.text);
+                                                    try {
+                                                      FirebaseAuth _auth =
+                                                          FirebaseAuth.instance;
+                                                      User user =
+                                                          _auth.currentUser;
+                                                      if (user != null) {
+                                                        DatabaseService
+                                                            databaseService =
+                                                            DatabaseService(
+                                                                user.uid);
+                                                        await databaseService
+                                                            .setEditMessage(
+                                                                messageController
+                                                                    .text);
+                                                      }
+                                                    } catch (e) {}
                                                     setState(() {
                                                       edit = false;
                                                     });
