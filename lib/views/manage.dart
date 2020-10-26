@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:safetyapp/services/database.dart';
 import 'package:safetyapp/utils.dart/utils.dart';
 import 'package:safetyapp/_routing/routes.dart' as routes;
 import 'package:safetyapp/views/emerg.dart';
@@ -34,7 +36,6 @@ class _ManageViewState extends State<ManageView>
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        elevation: 5,
         backgroundColor: AppColors.primaryBlack,
         onPressed: () async {
           SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -74,20 +75,6 @@ class _ManageViewState extends State<ManageView>
       body: SingleChildScrollView(
         child: Stack(
           children: <Widget>[
-            Positioned(
-                bottom: 10,
-                left: MediaQuery.of(context).size.width / 2.5,
-                child: FlatButton(
-                  onPressed: () {},
-                  child: Text('Logout'),
-                )),
-            Positioned(
-              bottom: 80,
-              right: 10,
-              child: Text('Add New Contact',
-                  style: TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.bold)),
-            ),
             Positioned(
               top: 35.0,
               left: 20.0,
@@ -253,6 +240,22 @@ class _ManageViewState extends State<ManageView>
                                                             .getInstance();
                                                     prefs.setString('message',
                                                         messageController.text);
+                                                    try {
+                                                      FirebaseAuth _auth =
+                                                          FirebaseAuth.instance;
+                                                      User user =
+                                                          _auth.currentUser;
+                                                      if (user != null) {
+                                                        DatabaseService
+                                                            databaseService =
+                                                            DatabaseService(
+                                                                user.uid);
+                                                        await databaseService
+                                                            .setEditMessage(
+                                                                messageController
+                                                                    .text);
+                                                      }
+                                                    } catch (e) {}
                                                     setState(() {
                                                       edit = false;
                                                     });
@@ -392,13 +395,10 @@ class _ManageViewState extends State<ManageView>
 Widget _buildTile(Color color, String name, String relationship,
     String telephone, BuildContext context, int i) {
   TextEditingController nameController = new TextEditingController();
-
   TextEditingController relationshipController = new TextEditingController();
 
   TextEditingController numberController = new TextEditingController();
-  nameController.text = name;
-  relationshipController.text = relationship;
-  numberController.text = telephone;
+
   return GestureDetector(
       onTap: () async {
         await showDialog<String>(

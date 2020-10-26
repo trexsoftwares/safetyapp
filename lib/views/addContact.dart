@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:safetyapp/services/database.dart';
 import 'package:safetyapp/utils.dart/utils.dart';
 import 'package:safetyapp/_routing/routes.dart' as routes;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -232,12 +234,22 @@ class _AddContactViewState extends State<AddContactView>
   }
 
   _save(String name, String relationship, String telephone) async {
+    DatabaseService databaseService;
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    User user = _auth.currentUser;
+    user != null ? databaseService = DatabaseService(user.uid) : null;
     int i = 0;
     while (true) {
       var data = prefs.getStringList(i.toString()) ?? 0;
       if (data == 0) {
         prefs.setStringList(i.toString(), [name, relationship, telephone]);
+        try {
+          if (user != null) {
+            await databaseService.addEditContacts(
+                name, relationship, telephone, '$i');
+          }
+        } catch (e) {}
         break;
       } else {
         i = i + 1;

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:safetyapp/services/database.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AppAuth {
   FirebaseAuth _auth;
@@ -31,6 +32,10 @@ class AppAuth {
       final User user = authResult.user;
       await databaseService.register(user.email, user.displayName.split(' ')[0],
           user.displayName.split(' ')[1], user.uid, user.photoURL);
+      if (user != null) {
+        DatabaseService dbs = DatabaseService(user.uid);
+        await dbs.getData();
+      }
       return AuthStatus(user, '');
     } catch (e) {
       return AuthStatus(null, _extractMessage(e));
@@ -76,6 +81,10 @@ class AppAuth {
     try {
       var result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
+      if (result.user.uid != null) {
+        DatabaseService dbs = DatabaseService(result.user.uid);
+        await dbs.getData();
+      }
       return AuthStatus(result.user, "");
     } catch (e) {
       //print(e);
@@ -87,7 +96,11 @@ class AppAuth {
 
   Future signOut() async {
     try {
-      return await _auth.signOut();
+      return await _auth.signOut().whenComplete(() async {
+        SharedPreferences sharedPref = await SharedPreferences.getInstance();
+        await sharedPref.setBool('logged', false);
+        await sharedPref.setString('loginType', null);
+      });
     } catch (e) {
       print(e.toString());
     }
