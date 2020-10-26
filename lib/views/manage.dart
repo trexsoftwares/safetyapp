@@ -428,8 +428,10 @@ Widget _buildTile(Color color, String name, String relationship,
     String telephone, BuildContext context, int i) {
   TextEditingController nameController = new TextEditingController();
   TextEditingController relationshipController = new TextEditingController();
-
   TextEditingController numberController = new TextEditingController();
+  nameController.text = name;
+  relationshipController.text = relationship;
+  numberController.text = telephone;
 
   return GestureDetector(
       onTap: () async {
