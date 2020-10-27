@@ -34,7 +34,7 @@ class HomeView extends StatelessWidget {
                     width: 90.0,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      image: DecorationImage(image: Images.man1),
+                      image: DecorationImage(image: Images.icon),
                       border: Border.all(
                         color: Colors.white,
                         width: 5.0,
@@ -53,7 +53,7 @@ class HomeView extends StatelessWidget {
                 Padding(
                   padding:
                       const EdgeInsets.only(top: 22.0, left: 42.0, right: 42.0),
-                  child: Center(child: Texts.welcomeText2),
+                  child: Center(child: Texts.welcomeText3),
                 )
               ],
             ),
@@ -106,7 +106,8 @@ class HomeView extends StatelessWidget {
                         shadowColor: Colors.white70,
                         child: FlatButton(
                           onPressed: () {
-                            Navigator.pushNamed(context, routes.loginViewRoute);
+                            Navigator.pushReplacementNamed(
+                                context, routes.loginViewRoute);
                           },
                           child: Icon(
                             FontAwesomeIcons.envelope,
@@ -128,7 +129,8 @@ class HomeView extends StatelessWidget {
                             SharedPreferences sharedPref =
                                 await SharedPreferences.getInstance();
                             await sharedPref.setBool('logged', true);
-                            Navigator.pushNamed(context, routes.emergViewRoute);
+                            Navigator.pushNamedAndRemoveUntil(context,
+                                routes.emergViewRoute, (route) => false);
                           });
                         }),
                     /*_buildIconCard(FontAwesomeIcons.google),
@@ -150,8 +152,12 @@ class HomeView extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(context, routes.manageViewRoute);
+                  onTap: () async {
+                    SharedPreferences sharedPref =
+                        await SharedPreferences.getInstance();
+                    await sharedPref.setBool('logged', true);
+                    Navigator.pushReplacementNamed(
+                        context, routes.emergViewRoute);
                   },
                   child: Texts.guestText,
                 )

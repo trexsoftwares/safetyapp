@@ -222,10 +222,10 @@ class EmergView extends StatelessWidget {
           List<String> number = sharedPref.getStringList('$person');
           print(number);
           if (number != null) {
-            sendMsg(number[2]);
+            await sendMsg(number[2]);
             Flushbar(
               title: 'Sent',
-              message: 'Message Sentss Successfully to ' + number[0],
+              message: 'Message Sent Successfully to ' + number[0],
               icon: Icon(
                 Icons.beenhere,
                 size: 28,
@@ -237,7 +237,11 @@ class EmergView extends StatelessWidget {
           }
         },
         child: Column(children: <Widget>[
-          Text('Person'),
+          FutureBuilder(
+              future: relationship('$person'),
+              builder: (context, snap) {
+                return snap.data == null ? Text('Not Set') : Text(snap.data);
+              }),
           Container(
             margin: EdgeInsets.only(bottom: margin),
             height: size,
@@ -245,7 +249,7 @@ class EmergView extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               image: DecorationImage(
-                image: img,
+                image: Images.person,
                 fit: BoxFit.cover,
               ),
             ),
@@ -280,7 +284,7 @@ class EmergView extends StatelessWidget {
         message +
             '\nhttps://www.google.com/maps/?q=${position.latitude},${position.longitude}'));
     print(message +
-        '\nshttps://www.google.com/maps/?q=${position.latitude},${position.longitude}');
+        '\nhttps://www.google.com/maps/?q=${position.latitude},${position.longitude}');
   }
 
   void sendAll(context) async {
@@ -307,6 +311,12 @@ class EmergView extends StatelessWidget {
       leftBarIndicatorColor: Colors.blue.shade300,
       duration: Duration(seconds: 3),
     )..show(context);
+  }
+
+  Future<String> relationship(String pos) async {
+    SharedPreferences sharedPref = await SharedPreferences.getInstance();
+    List<String> contact = sharedPref.getStringList('$pos');
+    return contact == null ? null : contact[1];
   }
 }
 

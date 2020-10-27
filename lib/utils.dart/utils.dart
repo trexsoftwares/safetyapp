@@ -78,6 +78,17 @@ class Texts {
     textAlign: TextAlign.center,
   );
 
+  static const welcomeText3 = const Text(
+    'This app is developed for emergency use cases. If you are in a trouble, you can access your loved one by a single tap.',
+    style: TextStyle(
+      fontFamily: Fonts.primaryFont,
+      fontSize: 16.0,
+      color: AppColors.primaryBlue,
+      fontWeight: FontWeight.bold,
+    ),
+    textAlign: TextAlign.center,
+  );
+
   static const connectNowText = const Text(
     'Connect now with',
     style: TextStyle(

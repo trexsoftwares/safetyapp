@@ -18,6 +18,10 @@ class ManageView extends StatefulWidget {
 
 class _ManageViewState extends State<ManageView>
     with SingleTickerProviderStateMixin {
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
+  static final User user = _auth.currentUser;
+  static final DatabaseService databaseService =
+      DatabaseService(user != null ? user.uid : 'guest');
   TabController tabController;
   String data = '';
   bool edit = false;
@@ -36,102 +40,103 @@ class _ManageViewState extends State<ManageView>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.primaryBlack,
-        onPressed: () async {
-          SharedPreferences prefs = await SharedPreferences.getInstance();
+    return WillPopScope(
+      child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: AppColors.primaryBlack,
+          onPressed: () async {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
 
-          int count = 0;
-          for (int i = 0; i < 5; i++) {
-            var data = prefs.getStringList(i.toString()) ?? 0;
-            if (data == 0) {
-              Navigator.pushNamed(context, routes.addContactViewRoute);
-              break;
-            } else {
-              count = count + 1;
-            }
-            if (count == 5) {
-              Flushbar(
-                title: 'Limit Reached',
-                message: 'You can only add up to 5 contacts',
-                icon: Icon(
-                  Icons.error_outline,
-                  size: 28,
-                  color: Colors.green.shade300,
-                ),
-                leftBarIndicatorColor: Colors.blue.shade300,
-                duration: Duration(seconds: 3),
-              )..show(context);
-            }
+            int count = 0;
+            for (int i = 0; i < 5; i++) {
+              var data = prefs.getStringList(i.toString()) ?? 0;
+              if (data == 0) {
+                Navigator.pushNamed(context, routes.addContactViewRoute);
+                break;
+              } else {
+                count = count + 1;
+              }
+              if (count == 5) {
+                Flushbar(
+                  title: 'Limit Reached',
+                  message: 'You can only add up to 5 contacts',
+                  icon: Icon(
+                    Icons.error_outline,
+                    size: 28,
+                    color: Colors.green.shade300,
+                  ),
+                  leftBarIndicatorColor: Colors.blue.shade300,
+                  duration: Duration(seconds: 3),
+                )..show(context);
+              }
 
 // Find the Scaffold in the widget tree and use it to show a SnackBar.
 
-          }
-        },
-        child: Icon(
-          Icons.add,
-          color: Colors.white,
+            }
+          },
+          child: Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-              right: 10,
-              bottom: 80,
-              child: Text('Add New Contact',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-            Positioned(
-                left: MediaQuery.of(context).size.width / 2.5,
-                bottom: 10,
-                child: FlatButton(
-                  onPressed: () async {
-                    try {
-                      FirebaseAuth _auth = FirebaseAuth.instance;
-                      AppAuth appAuth = AppAuth(_auth);
-                      await appAuth.signOut();
-                      Navigator.of(context)
-                          .pushReplacementNamed(routes.homeViewRoute);
-                    } catch (e) {}
-                  },
-                  child: Text('Logout',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                )),
-            Positioned(
-              top: 35.0,
-              left: 20.0,
-              child: IconButton(
-                onPressed: () => Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => EmergView())),
-                icon: Icon(
-                  LineIcons.long_arrow_left,
-                  color: AppColors.primaryBlack,
-                  size: 35.0,
+        body: SingleChildScrollView(
+          child: Stack(
+            children: <Widget>[
+              Positioned(
+                right: 10,
+                bottom: 80,
+                child: Text('Add New Contact',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+              Positioned(
+                  left: MediaQuery.of(context).size.width / 2.5,
+                  bottom: 10,
+                  child: FlatButton(
+                    onPressed: () async {
+                      try {
+                        FirebaseAuth _auth = FirebaseAuth.instance;
+                        AppAuth appAuth = AppAuth(_auth);
+                        await appAuth.signOut();
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            routes.homeViewRoute, (route) => false);
+                      } catch (e) {}
+                    },
+                    child: Text('Logout',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                  )),
+              Positioned(
+                top: 35.0,
+                left: 20.0,
+                child: IconButton(
+                  onPressed: () => Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => EmergView())),
+                  icon: Icon(
+                    LineIcons.long_arrow_left,
+                    color: AppColors.primaryBlack,
+                    size: 35.0,
+                  ),
                 ),
               ),
-            ),
-            Container(
-              height: MediaQuery.of(context).size.height,
-            ),
-            Container(
-              height: 300.0,
-              child: Stack(
-                children: <Widget>[
-                  Positioned.fill(
-                    bottom: 0,
-                    top: -260.0,
-                    right: -1100.0 + (MediaQuery.of(context).size.width),
-                    child: Container(
-                      height: 300.0,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppColors.primaryBlack,
+              Container(
+                height: MediaQuery.of(context).size.height,
+              ),
+              Container(
+                height: 300.0,
+                child: Stack(
+                  children: <Widget>[
+                    Positioned.fill(
+                      bottom: 0,
+                      top: -260.0,
+                      right: -1100.0 + (MediaQuery.of(context).size.width),
+                      child: Container(
+                        height: 300.0,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.primaryBlack,
+                        ),
                       ),
                     ),
-                  ),
-                  /* Positioned(
+                    /* Positioned(
                     top: 25.0,
                     left: 20.0,
                     child: IconButton(
@@ -143,30 +148,61 @@ class _ManageViewState extends State<ManageView>
                       ),
                     ),
                   ),*/
-                ],
+                  ],
+                ),
               ),
-            ),
-            Positioned(
-                top: 50,
-                right: 15,
-                child: _buildUserImage(Images.man2, 100.0, 50.0)),
-            Positioned(
-              top: 40.0,
-              left: 0.0,
-              bottom: 0.0,
-              child: Container(
-                padding: EdgeInsets.only(left: 0.0, top: 50.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                        padding: EdgeInsets.only(
-                            left: MediaQuery.of(context).size.width - 360),
-                        child: Texts.headerTextContact),
-                    SizedBox(
-                      height: 30.0,
-                    ),
-                    /*   TabBar(
+              Positioned(
+                  top: 50,
+                  right: 15,
+                  child: FutureBuilder(
+                      future: databaseService.proPicURL(),
+                      builder: (context, snap) {
+                        if (snap.hasData) {
+                          return Container(
+                            height: 90.0,
+                            width: 90.0,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                  image: NetworkImage(snap.data)),
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 5.0,
+                              ),
+                            ),
+                          );
+                        } else {
+                          return Container(
+                            height: 90.0,
+                            width: 90.0,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(image: Images.icon),
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 5.0,
+                              ),
+                            ),
+                          );
+                        }
+                      })),
+              Positioned(
+                top: 40.0,
+                left: 0.0,
+                bottom: 0.0,
+                child: Container(
+                  padding: EdgeInsets.only(left: 0.0, top: 50.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                          padding: EdgeInsets.only(
+                              left: MediaQuery.of(context).size.width - 360),
+                          child: Texts.headerTextContact),
+                      SizedBox(
+                        height: 30.0,
+                      ),
+                      /*   TabBar(
                       controller: tabController,
                       indicatorColor: Colors.transparent,
                       labelColor: AppColors.secondaryColor,
@@ -182,159 +218,170 @@ class _ManageViewState extends State<ManageView>
                         )
                       ],
                     ),*/
-                    FutureBuilder(
-                      future: getData(context),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: snapshot.data);
-                        } else {
-                          // We can show the loading view until the data comes back.
-
-                          return _buildTile(Color(0xFF6967B8),
-                              'No Contacts Added', '', '', context, 100);
-                        }
-                      },
-                    ),
-                    FutureBuilder(
-                        future: messageData(context),
+                      FutureBuilder(
+                        future: getData(context),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            return Container(
-                              padding: EdgeInsets.all(10),
-                              width: MediaQuery.of(context).size.width,
-                              child: Card(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                ),
-                                color: Colors.white,
-                                elevation: 10,
-                                child: edit
-                                    ? Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          Texts.emergencyMessage,
-                                          ListTile(
-                                            leading:
-                                                Icon(Icons.message, size: 50),
-                                            trailing: Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width -
-                                                    120,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      new BorderRadius.circular(
-                                                          10.0),
-                                                ),
-                                                child: Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: 20, right: 20),
-                                                    child: TextFormField(
+                            return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: snapshot.data);
+                          } else {
+                            // We can show the loading view until the data comes back.
 
-                                                        /*  validator: (String name) {
+                            return _buildTile(Color(0xFF6967B8),
+                                'No Contacts Added', '', '', context, 100);
+                          }
+                        },
+                      ),
+                      FutureBuilder(
+                          future: messageData(context),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return Container(
+                                padding: EdgeInsets.all(10),
+                                width: MediaQuery.of(context).size.width,
+                                child: Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
+                                  color: Colors.white,
+                                  elevation: 10,
+                                  child: edit
+                                      ? Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Texts.emergencyMessage,
+                                            ListTile(
+                                              leading:
+                                                  Icon(Icons.message, size: 50),
+                                              trailing: Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width -
+                                                      120,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        new BorderRadius
+                                                            .circular(10.0),
+                                                  ),
+                                                  child: Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: 20, right: 20),
+                                                      child: TextFormField(
+
+                                                          /*  validator: (String name) {
                                 if (name.length > 0) {
                                   return null;
                                 } else {
                                   return 'Please Enter a Name';
                                 }
                               },*/
-                                                        controller:
-                                                            messageController,
-                                                        decoration:
-                                                            InputDecoration(
-                                                          border:
-                                                              InputBorder.none,
-                                                          labelText:
-                                                              'Enter Message',
-                                                        )))),
-                                          ),
-                                          ButtonTheme.bar(
-                                            child: ButtonBar(
-                                              children: <Widget>[
-                                                FlatButton(
-                                                  child: const Text('Save',
-                                                      style: TextStyle(
-                                                          color: Colors.black)),
-                                                  onPressed: () async {
-                                                    SharedPreferences prefs =
-                                                        await SharedPreferences
-                                                            .getInstance();
-                                                    prefs.setString('message',
-                                                        messageController.text);
-                                                    try {
-                                                      FirebaseAuth _auth =
-                                                          FirebaseAuth.instance;
-                                                      User user =
-                                                          _auth.currentUser;
-                                                      if (user != null) {
-                                                        DatabaseService
-                                                            databaseService =
-                                                            DatabaseService(
-                                                                user.uid);
-                                                        await databaseService
-                                                            .setEditMessage(
-                                                                messageController
-                                                                    .text);
-                                                      }
-                                                    } catch (e) {}
-                                                    setState(() {
-                                                      edit = false;
-                                                    });
-                                                  },
-                                                ),
-                                              ],
+                                                          controller:
+                                                              messageController,
+                                                          decoration:
+                                                              InputDecoration(
+                                                            border: InputBorder
+                                                                .none,
+                                                            labelText:
+                                                                'Enter Message',
+                                                          )))),
                                             ),
-                                          ),
-                                        ],
-                                      )
-                                    : Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          Texts.emergencyMessage,
-                                          ListTile(
-                                            leading:
-                                                Icon(Icons.message, size: 50),
-                                            title: Text(snapshot.data,
-                                                style: TextStyle(
-                                                    color: Colors.black)),
-                                            subtitle: Text('\nCURRENT LOCATION',
-                                                style: TextStyle(
-                                                    color: Colors.black)),
-                                          ),
-                                          ButtonTheme.bar(
-                                            child: ButtonBar(
-                                              children: <Widget>[
-                                                FlatButton(
-                                                  child: const Text('Edit',
-                                                      style: TextStyle(
-                                                          color: Colors.black)),
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      edit = true;
-                                                    });
-                                                  },
-                                                ),
-                                              ],
+                                            ButtonTheme.bar(
+                                              child: ButtonBar(
+                                                children: <Widget>[
+                                                  FlatButton(
+                                                    child: const Text('Save',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.black)),
+                                                    onPressed: () async {
+                                                      SharedPreferences prefs =
+                                                          await SharedPreferences
+                                                              .getInstance();
+                                                      prefs.setString(
+                                                          'message',
+                                                          messageController
+                                                              .text);
+                                                      try {
+                                                        FirebaseAuth _auth =
+                                                            FirebaseAuth
+                                                                .instance;
+                                                        User user =
+                                                            _auth.currentUser;
+                                                        if (user != null) {
+                                                          DatabaseService
+                                                              databaseService =
+                                                              DatabaseService(
+                                                                  user.uid);
+                                                          await databaseService
+                                                              .setEditMessage(
+                                                                  messageController
+                                                                      .text);
+                                                        }
+                                                      } catch (e) {}
+                                                      setState(() {
+                                                        edit = false;
+                                                      });
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                              ),
-                            );
-                          } else {
-                            return Container();
-                          }
-                        })
-                  ],
+                                          ],
+                                        )
+                                      : Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Texts.emergencyMessage,
+                                            ListTile(
+                                              leading:
+                                                  Icon(Icons.message, size: 50),
+                                              title: Text(snapshot.data,
+                                                  style: TextStyle(
+                                                      color: Colors.black)),
+                                              subtitle: Text(
+                                                  '\nCURRENT LOCATION',
+                                                  style: TextStyle(
+                                                      color: Colors.black)),
+                                            ),
+                                            ButtonTheme.bar(
+                                              child: ButtonBar(
+                                                children: <Widget>[
+                                                  FlatButton(
+                                                    child: const Text('Edit',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.black)),
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        edit = true;
+                                                      });
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                ),
+                              );
+                            } else {
+                              return Container();
+                            }
+                          })
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
+      onWillPop: () {
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil(routes.emergViewRoute, (route) => false);
+      },
     );
   }
 
