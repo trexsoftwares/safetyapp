@@ -83,28 +83,6 @@ class _ManageViewState extends State<ManageView>
           child: Stack(
             children: <Widget>[
               Positioned(
-                right: 10,
-                bottom: 80,
-                child: Text('Add New Contact',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-              Positioned(
-                  left: MediaQuery.of(context).size.width / 2.5,
-                  bottom: 10,
-                  child: FlatButton(
-                    onPressed: () async {
-                      try {
-                        FirebaseAuth _auth = FirebaseAuth.instance;
-                        AppAuth appAuth = AppAuth(_auth);
-                        await appAuth.signOut();
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                            routes.homeViewRoute, (route) => false);
-                      } catch (e) {}
-                    },
-                    child: Text('Logout',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                  )),
-              Positioned(
                 top: 35.0,
                 left: 20.0,
                 child: IconButton(
@@ -200,7 +178,7 @@ class _ManageViewState extends State<ManageView>
                               left: MediaQuery.of(context).size.width - 360),
                           child: Texts.headerTextContact),
                       SizedBox(
-                        height: 30.0,
+                        height: MediaQuery.of(context).size.height / 55,
                       ),
                       /*   TabBar(
                       controller: tabController,
@@ -238,7 +216,13 @@ class _ManageViewState extends State<ManageView>
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               return Container(
-                                padding: EdgeInsets.all(10),
+                                padding: EdgeInsets.only(
+                                    top: MediaQuery.of(context).size.height /
+                                        900,
+                                    right:
+                                        MediaQuery.of(context).size.width / 50,
+                                    left:
+                                        MediaQuery.of(context).size.width / 50),
                                 width: MediaQuery.of(context).size.width,
                                 child: Card(
                                   shape: RoundedRectangleBorder(
@@ -252,8 +236,11 @@ class _ManageViewState extends State<ManageView>
                                           children: <Widget>[
                                             Texts.emergencyMessage,
                                             ListTile(
-                                              leading:
-                                                  Icon(Icons.message, size: 50),
+                                              leading: Icon(Icons.message,
+                                                  size: MediaQuery.of(context)
+                                                          .size
+                                                          .width /
+                                                      10),
                                               trailing: Container(
                                                   width: MediaQuery.of(context)
                                                           .size
@@ -269,6 +256,7 @@ class _ManageViewState extends State<ManageView>
                                                       padding: EdgeInsets.only(
                                                           left: 20, right: 20),
                                                       child: TextFormField(
+                                                          autofocus: true,
 
                                                           /*  validator: (String name) {
                                 if (name.length > 0) {
@@ -335,8 +323,11 @@ class _ManageViewState extends State<ManageView>
                                           children: <Widget>[
                                             Texts.emergencyMessage,
                                             ListTile(
-                                              leading:
-                                                  Icon(Icons.message, size: 50),
+                                              leading: Icon(Icons.message,
+                                                  size: MediaQuery.of(context)
+                                                          .size
+                                                          .width /
+                                                      10),
                                               title: Text(snapshot.data,
                                                   style: TextStyle(
                                                       color: Colors.black)),
@@ -374,6 +365,22 @@ class _ManageViewState extends State<ManageView>
                   ),
                 ),
               ),
+              Positioned(
+                  left: MediaQuery.of(context).size.width / 2.5,
+                  bottom: 10,
+                  child: FlatButton(
+                    onPressed: () async {
+                      try {
+                        FirebaseAuth _auth = FirebaseAuth.instance;
+                        AppAuth appAuth = AppAuth(_auth);
+                        await appAuth.signOut();
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            routes.homeViewRoute, (route) => false);
+                      } catch (e) {}
+                    },
+                    child: Text('Logout',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                  )),
             ],
           ),
         ),
@@ -445,7 +452,7 @@ class _ManageViewState extends State<ManageView>
         ]));
 
         tabs.add(SizedBox(
-          height: 10,
+          height: MediaQuery.of(context).size.height / 150,
         ));
       }
     }
@@ -491,7 +498,7 @@ Widget _buildTile(Color color, String name, String relationship,
               child: Column(
                 children: <Widget>[
                   Texts.editContact,
-                  SizedBox(height: 10),
+                  // SizedBox(height: MediaQuery.of(context).size.height / 600),
                   Container(
                       width: MediaQuery.of(context).size.width / 1.2,
                       decoration: BoxDecoration(
@@ -501,6 +508,7 @@ Widget _buildTile(Color color, String name, String relationship,
                       child: Padding(
                           padding: EdgeInsets.only(left: 20, right: 20),
                           child: TextFormField(
+                              autofocus: true,
 
                               /*  validator: (String name) {
                                 if (name.length > 0) {
@@ -514,7 +522,7 @@ Widget _buildTile(Color color, String name, String relationship,
                                 border: InputBorder.none,
                                 labelText: 'Enter Name',
                               )))),
-                  SizedBox(height: 10),
+                  // SizedBox(height: 10),
                   Container(
                       width: MediaQuery.of(context).size.width / 1.2,
                       decoration: BoxDecoration(
@@ -524,6 +532,7 @@ Widget _buildTile(Color color, String name, String relationship,
                       child: Padding(
                           padding: EdgeInsets.only(left: 20, right: 20),
                           child: TextFormField(
+                              autofocus: true,
 
                               /*  validator: (String relationship) {
                                 if (relationship.length > 0) {
@@ -537,7 +546,7 @@ Widget _buildTile(Color color, String name, String relationship,
                                 border: InputBorder.none,
                                 labelText: 'Enter Relationship',
                               )))),
-                  SizedBox(height: 10),
+                  //  SizedBox(height: 10),
                   Container(
                       width: MediaQuery.of(context).size.width / 1.2,
                       decoration: BoxDecoration(
@@ -547,6 +556,7 @@ Widget _buildTile(Color color, String name, String relationship,
                       child: Padding(
                           padding: EdgeInsets.only(left: 20, right: 20),
                           child: TextFormField(
+                              autofocus: true,
                               keyboardType: TextInputType.number,
                               /*  validator: (String number) {
                                 if (number.length != 10) {

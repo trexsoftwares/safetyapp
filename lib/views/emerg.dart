@@ -28,7 +28,7 @@ class EmergView extends StatelessWidget {
                 child: ClipPath(
                   clipper: ClippingClass(),
                   child: Container(
-                    height: 130.0,
+                    height: MediaQuery.of(context).size.height / 6,
                     decoration: BoxDecoration(color: AppColors.primaryBlack),
                   ),
                 ),
@@ -290,27 +290,33 @@ class EmergView extends StatelessWidget {
   void sendAll(context) async {
     SharedPreferences sharedPref = await SharedPreferences.getInstance();
     List<String> numbers = [];
+    bool sent = false;
     for (int i = 0; i < 5; i++) {
       List<String> number = sharedPref.getStringList('$i');
-      if (number == null) break;
-      print(number);
-      print(number[2]);
+
+      if (number == null) {
+        break;
+      }
+      sent = true;
 
       numbers.add(number[2]);
-      print(numbers);
+
       await sendMsg(number[2]);
     }
-    Flushbar(
-      title: 'Sent',
-      message: 'Sent Message to all Contacts Successfully',
-      icon: Icon(
-        Icons.beenhere,
-        size: 28,
-        color: Colors.green.shade300,
-      ),
-      leftBarIndicatorColor: Colors.blue.shade300,
-      duration: Duration(seconds: 3),
-    )..show(context);
+
+    if (sent) {
+      Flushbar(
+        title: 'Sent',
+        message: 'Sent Messages to all Contacts Successfully',
+        icon: Icon(
+          Icons.beenhere,
+          size: 28,
+          color: Colors.green.shade300,
+        ),
+        leftBarIndicatorColor: Colors.blue.shade300,
+        duration: Duration(seconds: 5),
+      )..show(context);
+    }
   }
 
   Future<String> relationship(String pos) async {

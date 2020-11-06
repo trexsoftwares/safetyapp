@@ -79,7 +79,7 @@ class Texts {
   );
 
   static const welcomeText3 = const Text(
-    'This app is developed for emergency use cases. If you are in a trouble, you can access your loved one by a single tap.',
+    'This app was developed for emergency use. If you are in any trouble, you can inform your loved ones in a single tap.',
     style: TextStyle(
       fontFamily: Fonts.primaryFont,
       fontSize: 16.0,
